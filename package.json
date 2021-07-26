@@ -1,0 +1,31 @@
+{
+  "name": "covid-notifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "knex": "^0.95.8",
+    "sqlite3": "^5.0.2",
+    "superagent": "^6.1.0",
+    "web-push": "^3.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cthuluhoop123/covid-notifier.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cthuluhoop123/covid-notifier/issues"
+  },
+  "homepage": "https://github.com/cthuluhoop123/covid-notifier#readme"
+}
