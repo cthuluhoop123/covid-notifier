@@ -15,7 +15,14 @@ knex.schema
         table.string('id');
     })
     .createTable('postcodes', table => {
+        table
+            .string('user_id')
+            .references('users.id');
         
+        table
+            .string('postcode');
+
+        table.unique(['user_id', 'postcode']);
     })
     .catch(e => {
         console.error(e);

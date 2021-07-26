@@ -11,6 +11,7 @@
     "knex": "^0.95.8",
     "sqlite3": "^5.0.2",
     "superagent": "^6.1.0",
+    "uuid": "^8.3.2",
     "web-push": "^3.4.5"
   },
   "devDependencies": {},

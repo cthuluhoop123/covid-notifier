@@ -13,18 +13,22 @@ async function run() {
         .register(`/notify-service-worker.js`, {
             scope: '/'
         });
-
     await navigator.serviceWorker.ready;
 
-    const subscription = await registration.pushManager
-        .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidKey)
-        });
+    try {
+        const subscription = await registration.pushManager
+            .subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(vapidKey)
+            });
 
-    await request
-        .post(process.env.REACT_APP_SERVER + '/subscribe')
-        .send(subscription.toJSON());
+        await request
+            .post(process.env.REACT_APP_SERVER + '/subscribe')
+            .send(subscription.toJSON());
+    } catch (err) {
+        // TODO
+        console.log(Notification.permission);
+    }
 }
 
 // Not my code :)
