@@ -2,11 +2,6 @@ import request from 'superagent';
 
 const vapidKey = process.env.REACT_APP_PUBLIC_VAPID;
 
-if ('serviceWorker' in navigator) {
-    run().catch(err => {
-        console.error('Could not load notify service worker:', err);
-    });
-}
 
 async function run() {
     const registration = await navigator.serviceWorker
@@ -15,20 +10,18 @@ async function run() {
         });
     await navigator.serviceWorker.ready;
 
-    try {
-        const subscription = await registration.pushManager
-            .subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(vapidKey)
-            });
 
-        await request
-            .post(process.env.REACT_APP_SERVER + '/subscribe')
-            .send(subscription.toJSON());
-    } catch (err) {
-        // TODO
-        console.log(Notification.permission);
-    }
+    const subscription = await registration.pushManager
+        .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidKey)
+        });
+
+    await request
+        .post(process.env.REACT_APP_SERVER + '/subscribe')
+        .send(subscription.toJSON());
+    
+    return subscription;
 }
 
 // Not my code :)
@@ -46,3 +39,5 @@ function urlBase64ToUint8Array(base64String) {
     }
     return outputArray;
 }
+
+export default { run };

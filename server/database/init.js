@@ -14,15 +14,29 @@ knex.schema
     .createTable('users', table => {
         table.string('id');
     })
-    .createTable('postcodes', table => {
+    .createTable('postcode_sids', table => {
         table
             .string('user_id')
             .references('users.id');
-        
-        table
-            .string('postcode');
 
-        table.unique(['user_id', 'postcode']);
+        table
+            .string('postcode_sid');
+
+        table.unique(['user_id', 'postcode_sid']);
+    })
+    .createTable('subscriptions', table => {
+        table
+            .string('user_id')
+            .references('users.id');
+
+        table
+            .string('endpoint');
+
+        table
+            .string('p256dh');
+
+        table
+            .string('auth');
     })
     .catch(e => {
         console.error(e);

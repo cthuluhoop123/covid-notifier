@@ -1,14 +1,14 @@
 const express = require('express');
 const app = express();
 
-const db = require('./database.js');
+const db = require('./database/database.js');
 
 const helmet = require('helmet');
 const cors = require('cors');
 
 const notifications = require('./notifications/notifications.js');
 
-const suburbs = require('./suburbs.json');
+const suburbs = require('./database/suburbs.json');
 
 app.use(helmet());
 app.use(express.json());
@@ -19,22 +19,22 @@ app.use(cors());
 
 
 app.post('/configure', async (req, res, next) => {
-    const { id, postcodes } = req.body;
+    const { id, postcodeSIDs } = req.body;
     try {
-        if (!isValidPostcodes(postcodes)) {
+        if (!isValidPostcodeSIDs(postcodeSIDs)) {
             res.status(400).json({
                 error: 'Invalid postcode'
             });
             return;
         }
-        if ([...new Set(postcodes)].length !== postcodes.length) {
+        if ([...new Set(postcodeSIDs)].length !== postcodeSIDs.length) {
             res.status(400).json({
-                error: 'Duplicate postcodes'
+                error: 'Duplicate postcodeSIDs'
             });
             return;
         }
-        const configuredPostcodes = await db.updatePostcodes(id, postcodes);
-        res.json(postcodeToSubPost(configuredPostcodes));
+        const configuredPostcodeSIDs = await db.updatePostcodes(id, postcodeSIDs);
+        res.json(postcodeSIDToSubPost(configuredPostcodeSIDs));
     } catch (err) {
         next(err);
     }
@@ -43,8 +43,8 @@ app.post('/configure', async (req, res, next) => {
 app.get('/configuration', async (req, res, next) => {
     const { id } = req.query;
     try {
-        const postcodes = await db.getPostCodes(id);
-        res.json(postcodeToSubPost(postcodes));
+        const postcodeSIDs = await db.getPostCodeSIDs(id);
+        res.json(postcodeSIDToSubPost(postcodeSIDs));
     } catch (err) {
         next(err);
     }
@@ -61,6 +61,24 @@ app.post('/createUser', async (req, res, next) => {
     }
 });
 
+app.get('/suburbs', (req, res) => {
+    const { postcode } = req.query;
+    if (!postcode || postcode.length < 2) {
+        res.json([]);
+    }
+    res.json(
+        suburbs
+            .filter(suburb => suburb.postcode.startsWith(postcode))
+            .map(suburb => {
+                return {
+                    postcode: suburb.postcode,
+                    suburb: suburb.suburb,
+                    sid: suburb.sid
+                }
+            })
+    );
+});
+
 app.use('/subscribe', notifications);
 
 app.use((err, req, res, next) => {
@@ -72,18 +90,20 @@ app.use((err, req, res, next) => {
 
 app.listen(process.env.PORT, () => console.log('Running on', process.env.PORT));
 
-function isValidPostcodes(postcodes) {
-    return postcodes.every(postcode => {
-        return !!suburbs.find(suburb => suburb.postcode === postcode);
+function isValidPostcodeSIDs(postcodeSIDs) {
+    return postcodeSIDs.every(sid => {
+        return !!suburbs.find(suburb => suburb.sid === sid);
     });
 }
 
-function postcodeToSubPost(postcodes) {
+function postcodeSIDToSubPost(postcodeSIDs) {
     const data = [];
-    for (const postcode of postcodes) {
+    for (const postcode_sid of postcodeSIDs) {
+        const suburb = suburbs.find(suburb => suburb.sid === postcode_sid);
         data.push({
-            postcode,
-            suburb: suburbs.find(suburb => suburb.postcode === postcode).suburb
+            sid: postcode_sid,
+            postcode: suburb.postcode,
+            suburb: suburb.suburb
         });
     }
     return data;
