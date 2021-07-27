@@ -1,9 +1,58 @@
 .content {
-    max-width: 500px;
     margin: 1rem 1rem;
 }
 
 .add {
     text-align: center;
     margin: 1rem 0rem;
+}
+
+.subscribe {
+    margin-top: 2rem;
+}
+
+.subscribedList {
+    margin-top: 1rem;
+}
+
+p.faded {
+    opacity: 80%;
+}
+
+.caseTable {
+    overflow-x: scroll;
+}
+
+#interested {
+    margin-bottom: .7rem;
+}
+
+.iconText {
+    opacity: 50%;
+    font-size: .5rem;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+h1:hover {
+    cursor: pointer !important;
+}
+
+.caseTable {
+    max-height: 500px;
+}
+
+.caseDate {
+    margin-bottom: 3px;
+}
+
+.alignWithIcon {
+    align-items:center;
+}
+
+p.slightEmphasis {
+    font-weight: 500;
 }

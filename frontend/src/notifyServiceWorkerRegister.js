@@ -16,10 +16,6 @@ async function run() {
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(vapidKey)
         });
-
-    await request
-        .post(process.env.REACT_APP_SERVER + '/subscribe')
-        .send(subscription.toJSON());
     
     return subscription;
 }

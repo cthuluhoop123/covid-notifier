@@ -8,6 +8,30 @@ const knex = require('knex')({
 const uuid = require('uuid').v4;
 
 module.exports = {
+    async getUsers(uuid) {
+        const query = knex('users')
+            .select()
+            .innerJoin('postcode_sids', 'users.id', 'postcode_sids.user_id');
+
+        if (uuid) {
+            query.where('users.id', uuid);
+        }
+
+        const users = await query;
+
+        return users.reduce((acc, cur) => {
+            const existing = acc.find(user => user.userId === cur.user_id);
+            if (existing) {
+                existing.postcodeSIDs.push(cur.postcode_sid);
+                return acc;
+            }
+            acc.push({
+                userId: cur.user_id,
+                postcodeSIDs: [cur.postcode_sid]
+            });
+            return acc;
+        }, []);
+    },
     async getSubscriptions(uuid) {
         const query = knex('subscriptions')
             .select()
@@ -88,6 +112,8 @@ module.exports = {
                 endpoint: subscription.endpoint,
                 p256dh: subscription.keys.p256dh,
                 auth: subscription.keys.auth
-            });
+            })
+            .onConflict('user_id')
+            .merge();
     }
 };

@@ -7,18 +7,6 @@ webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, p
 
 const router = Router();
 
-router.post('/', (req, res) => {
-    const subscription = req.body;
-    console.log(subscription);
-    res.status(201).json({});
-    const payload = JSON.stringify({ title: 'test' });
-
-    webPush.sendNotification(subscription, payload).catch(error => {
-        console.error(error);
-    });
-});
-
-
 router.post('/sub', async (req, res, next) => {
     const { id, subscription } = req.body;
     try {

@@ -12,7 +12,7 @@ const knex = require('knex')({
 
 knex.schema
     .createTable('users', table => {
-        table.string('id');
+        table.string('id').primary();
     })
     .createTable('postcode_sids', table => {
         table
@@ -27,7 +27,8 @@ knex.schema
     .createTable('subscriptions', table => {
         table
             .string('user_id')
-            .references('users.id');
+            .references('users.id')
+            .unique();
 
         table
             .string('endpoint');

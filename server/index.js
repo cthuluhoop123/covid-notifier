@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 const notifications = require('./notifications/notifications.js');
+const covidFetcher = require('./covidFetch/fetch.js');
 
 const suburbs = require('./database/suburbs.json');
 
@@ -29,7 +30,7 @@ app.post('/configure', async (req, res, next) => {
         }
         if ([...new Set(postcodeSIDs)].length !== postcodeSIDs.length) {
             res.status(400).json({
-                error: 'Duplicate postcodeSIDs'
+                error: 'Duplicate postcodes...'
             });
             return;
         }
@@ -77,6 +78,29 @@ app.get('/suburbs', (req, res) => {
                 }
             })
     );
+});
+
+app.get('/nearCases', async (req, res, next) => {
+    const { id } = req.query;
+
+    if (!id) {
+        res.status(400).json({
+            body: 'Missing id...'
+        })
+        return;
+    }
+
+    try {
+        const cases = await covidFetcher.fetchCases(id);
+        if (!cases.length) {
+            res.json([]);
+            return;
+        }
+
+        res.json(cases[0].nearCases);
+    } catch (err) {
+        next(err);
+    }
 });
 
 app.use('/subscribe', notifications);

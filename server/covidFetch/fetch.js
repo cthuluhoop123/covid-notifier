@@ -14,67 +14,66 @@ async function fetchCases(uuid) {
     const res = await request.get(dataEndpoint);
     const casesToday = res.body.data.monitor
         .filter(covidCase => {
-            const caseDate = new Date(covidCase.Date);
+            const caseDate = new Date(covidCase['Last updated date']);
             const today = new Date();
-
-            return today.getDate() - caseDate.getDate() <= 2
-                && caseDate.getMonth() === today.getMonth()
-                && caseDate.getFullYear() === today.getFullYear();
+            return today - caseDate <= 1000 * 60 * 60 * 24 * 100;
         })
-        .sort((a, b) => new Date(b.Date) - new Date(a.Date));
+        .sort((a, b) => new Date(b['Last updated date']) - new Date(a['Last updated date']));
 
-    const subscriptions = await db.getSubscriptions(uuid);
+    const users = await db.getUsers(uuid);
     const nearCases = [];
-    for (const subscription of subscriptions) {
-        for (const postcodeSID of subscription.postcodeSIDs) {
-            const userSuburb = suburbs.find(suburb => suburb.sid === postcodeSID);
 
-            nearCases.push(
-                {
-                    ...subscription,
-                    nearCases: casesToday.filter(covidCase => {
+    for (const user of users) {
+        const data = { nearCases: [] };
+
+        for (const postcodeSID of user.postcodeSIDs) {
+            const userSuburb = suburbs.find(suburb => suburb.sid === postcodeSID);
+            data.nearCases.push(
+                ...casesToday
+                    .filter(covidCase => {
                         return distance(
                             Number(covidCase.Lat), Number(covidCase.Lon),
                             Number(userSuburb.lat), Number(userSuburb.lng)
-                        ) <= 10;
-                    }).map(data => {
+                        ) <= 12;
+                    })
+                    .map(data => {
                         return {
                             venue: data.Venue,
                             address: data.Address,
                             suburb: data.Suburb,
                             date: data.Date,
                             time: data.Time,
-                            adviceHTML: data.HealthAdviceHTML
+                            adviceHTML: data.HealthAdviceHTML,
+                            updated: data['Last updated date']
                         }
                     })
-                }
             );
         }
+
+        nearCases.push(data);
     }
+
     return nearCases;
 }
 
-fetchCases('39082558-b759-47d5-be08-e59a8a043e47')
-    .then(data => {
-        const nearCases = data[0].nearCases;
-        const venues = nearCases.map(covid => covid.venue);
+// fetchCases('4d506f39-d4c2-4b15-a448-05351c4170bd')
+//     .then(data => {
+//         const nearCases = data[0].nearCases;
+//         const venues = nearCases.map(covid => covid.venue);
 
-        console.log(venues)
-        // console.log(Buffer.from(JSON.stringify(nearCases.slice(0, 10))).length);
+//         const payload = JSON.stringify(JSON.stringify(venues));
 
-        // const payload = JSON.stringify(JSON.stringify(nearCases.slice(0, 10)));
-
-        // webPush.sendNotification({
-        //     endpoint: subscription.endpoint,
-        //     keys: {
-        //         p256dh: subscription.p256dh,
-        //         auth: subscription.auth
-        //     }
-        // }, payload).catch(error => {
-        //     console.error(error);
-        // });
-    })
-    .catch(console.error);
+//         webPush.sendNotification({
+//             endpoint: data[0].endpoint,
+//             keys: {
+//                 p256dh: data[0].p256dh,
+//                 auth: data[0].auth
+//             }
+//         }, payload).catch(error => {
+//             console.error(error);
+//         });
+//     })
+//     .catch(console.error);
 
 
 // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
@@ -87,5 +86,6 @@ function distance(lat1, lon1, lat2, lon2) {
 
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
+
 
 module.exports = { fetchCases };
