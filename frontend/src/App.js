@@ -300,14 +300,6 @@ function App() {
                                         })
                                     }
                                 </Tbody>
-                                <Tfoot>
-                                    <Tr>
-                                        <Th>Suburb</Th>
-                                        <Th>Location</Th>
-                                        <Th>Time</Th>
-                                        <Th>Updated</Th>
-                                    </Tr>
-                                </Tfoot>
                             </Table>
                         </div>
                         : null

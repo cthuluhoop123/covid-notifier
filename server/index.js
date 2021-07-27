@@ -97,7 +97,7 @@ app.get('/nearCases', async (req, res, next) => {
             return;
         }
 
-        res.json(cases[0].nearCases);
+        res.json(cases[0].nearCases.slice(0, 500));
     } catch (err) {
         next(err);
     }
