@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-import { ChakraProvider, ColorModeScript, extendTheme, useColorMode } from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react'
 
 const theme = extendTheme({
     initialColorMode: 'dark',
@@ -18,3 +19,5 @@ ReactDOM.render(
     </React.StrictMode >,
     document.getElementById('root')
 );
+
+serviceWorkerRegistration.register();
