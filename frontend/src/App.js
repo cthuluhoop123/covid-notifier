@@ -83,6 +83,7 @@ function App() {
                 .then(res => {
                     setUuid(res.body.id);
                     setPostcodeSIDs([]);
+                    setCovidCases([]);
                     localStorage.setItem('id', res.body.id);
                     return res.body.id;
                 })

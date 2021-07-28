@@ -69,6 +69,9 @@ async function fetch() {
         }).catch(err => { });
     }
 
-    await notificationsSent(markAsSent).then(res => {
+    await notificationsSent(markAsSent).catch(err => {
+        console.error(err);
     });
 }
+
+fetch();

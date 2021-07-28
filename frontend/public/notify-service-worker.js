@@ -9,12 +9,15 @@ self.addEventListener('push', ev => {
             }
         ],
         icon: 'https://cdn.pixabay.com/photo/2020/04/29/07/54/coronavirus-5107715_960_720.png',
+        vibrate: [100, 100, 100],
         data: { url: self.location.origin }
     });
 });
 
 self.addEventListener('notificationclick', event => {
     const appURL = new URL(self.location.origin).href;
+
+    event.notification.close();
 
     event.waitUntil(
         clients
