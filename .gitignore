@@ -76,3 +76,6 @@ typings/
 .fusebox/
 *.production
 *.db
+
+
+server/database/cases.json
