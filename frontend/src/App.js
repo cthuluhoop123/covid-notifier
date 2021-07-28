@@ -96,53 +96,55 @@ function App() {
                 .then(res => {
                     setPostcodeSIDs(res.body);
                 });
-
-            request
-                .get(process.env.REACT_APP_SERVER + '/nearCases')
-                .query({ id: uuid })
-                .then(res => {
-                    setCovidCases(
-                        res.body
-                            .reduce((acc, cur) => {
-                                const existing = acc.find(place => {
-                                    return place.address === cur.address
-                                        && place.suburb === cur.suburb
-                                        && place.venue === cur.venue
-                                });
-                                if (!existing) {
-                                    acc.push({
-                                        address: cur.address,
-                                        times: [{
-                                            date: cur.date,
-                                            time: cur.time
-                                        }],
-                                        suburb: cur.suburb,
-                                        updated: cur.updated,
-                                        venue: cur.venue,
-                                        distance: cur.distance
-                                    });
-                                } else {
-                                    existing.times.push({
-                                        date: cur.date,
-                                        time: cur.time
-                                    });
-                                }
-                                return acc;
-                            }, [])
-                            .sort((a, b) => {
-                                // Sort by distance and then by recency
-                                const distanceDiff = a.distance - b.distance;
-                                const dateDiff = new Date(b.updated) - new Date(a.updated);
-                                if (dateDiff !== 0) {
-                                    return dateDiff;
-                                } else {
-                                    return distanceDiff
-                                }
-                            })
-                    );
-                });
         }
     }, []);
+
+    useEffect(() => {
+        request
+            .get(process.env.REACT_APP_SERVER + '/nearCases')
+            .query({ id: uuid })
+            .then(res => {
+                setCovidCases(
+                    res.body
+                        .reduce((acc, cur) => {
+                            const existing = acc.find(place => {
+                                return place.address === cur.address
+                                    && place.suburb === cur.suburb
+                                    && place.venue === cur.venue
+                            });
+                            if (!existing) {
+                                acc.push({
+                                    address: cur.address,
+                                    times: [{
+                                        date: cur.date,
+                                        time: cur.time
+                                    }],
+                                    suburb: cur.suburb,
+                                    updated: cur.updated,
+                                    venue: cur.venue,
+                                    distance: cur.distance
+                                });
+                            } else {
+                                existing.times.push({
+                                    date: cur.date,
+                                    time: cur.time
+                                });
+                            }
+                            return acc;
+                        }, [])
+                        .sort((a, b) => {
+                            // Sort by distance and then by recency
+                            const distanceDiff = a.distance - b.distance;
+                            const dateDiff = new Date(b.updated) - new Date(a.updated);
+                            if (dateDiff !== 0) {
+                                return dateDiff;
+                            } else {
+                                return distanceDiff
+                            }
+                        })
+                );
+            });
+    }, [postcodeSIDs]);
 
     useEffect(() => {
         if (error) {
@@ -179,7 +181,6 @@ function App() {
                 if (!remove) {
                     toast({
                         title: 'Suburb added',
-                        description: 'Refresh the page to see cases!',
                         status: 'success',
                         duration: 3000,
                         isClosable: true,
@@ -316,14 +317,22 @@ function App() {
                 <Heading
                     as='h1'
                     size='xl'
-                    onClick={() => toggleColorMode()}
-                >COVID-19</Heading>
+                >
+                    <span className='heading' onClick={() => toggleColorMode()}>COVID-19</span>
+                </Heading>
                 <br />
-                <Text size='sm' as='sup'>
-                    <a href='https://www.nsw.gov.au/covid-19/nsw-covid-19-case-locations'>
-                        Go to ServiceNSW →
+                <div className='externals'>
+                    <Text size='sm' as='sup'>
+                        <a href='https://www.nsw.gov.au/covid-19/nsw-covid-19-case-locations'>
+                            Go to ServiceNSW →
+                        </a>
+                    </Text>
+                    <Text size='sm' as='sup'>
+                        <a href='https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx#local'>
+                            See latest cases →
                     </a>
-                </Text>
+                    </Text>
+                </div>
                 {renderTable()}
                 <div className='subscribe'>
                     <AutoComplete
@@ -332,7 +341,6 @@ function App() {
                             return value.trim().length >= 3;
                         }}
                         maxSuggestions={5}
-                        closeOnselect={false}
                     >
                         <AutoCompleteInput
                             onKeyDown={e => {

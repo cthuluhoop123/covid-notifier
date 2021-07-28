@@ -37,7 +37,7 @@ p.faded {
     margin: auto;
 }
 
-h1:hover {
+.heading:hover {
     cursor: pointer !important;
 }
 
@@ -55,4 +55,8 @@ h1:hover {
 
 p.slightEmphasis {
     font-weight: 500;
+}
+
+.externals a {
+    margin-right: 1.5rem;
 }
