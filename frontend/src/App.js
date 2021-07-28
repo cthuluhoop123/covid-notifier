@@ -23,7 +23,8 @@ import {
     Td,
     useColorMode,
     TableCaption,
-    Center
+    Center,
+    ScaleFade
 } from '@chakra-ui/react';
 
 import {
@@ -245,6 +246,72 @@ function App() {
             });
     };
 
+    const renderTable = () => {
+        if (!covidCases) {
+            return <Skeleton height='60px' />;
+        }
+
+        if (!covidCases.length) {
+            return (
+                <ScaleFade in={true}>
+                    <Text fontSize='sm'>No cases near you. Neat!</Text>
+                </ScaleFade>
+            );
+        }
+
+        return (
+            <ScaleFade in={true}>
+                <div className='caseTable'>
+                    <Table
+                        variant='striped'
+                        size='sm'
+                        colorScheme='pink'
+                    >
+                        <TableCaption placement='top'>
+                            Latest updated cases near you
+                    </TableCaption>
+                        <Thead>
+                            <Tr>
+                                <Th>Suburb</Th>
+                                <Th>Location</Th>
+                                <Th>Time</Th>
+                                <Th>Updated</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {
+                                covidCases.map(covid => {
+                                    return (
+                                        <Tr className='row'>
+                                            <Td>{covid.suburb}</Td>
+                                            <Td>
+                                                <strong>{covid.venue}</strong>
+                                                <p className='faded'>{covid.address}</p>
+                                            </Td>
+                                            <Td>
+                                                {
+                                                    covid.times.map(time => {
+                                                        return (
+                                                            <div className='caseDate'>
+                                                                <p className='slightEmphasis'>{time.date}</p>
+                                                                <p className='faded'>{time.time}</p>
+                                                            </div>
+                                                        );
+                                                    })
+                                                }
+                                            </Td>
+                                            <Td>{covid.updated}</Td>
+                                        </Tr>
+                                    );
+                                })
+                            }
+                        </Tbody>
+                    </Table>
+                </div>
+            </ScaleFade>
+        );
+    };
+
     return (
         <div className='container'>
             <div className='content'>
@@ -259,57 +326,7 @@ function App() {
                         Go to ServiceNSW →
                     </a>
                 </Text>
-                {
-                    covidCases && covidCases.length
-                        ? <div className='caseTable'>
-                            <Table
-                                variant='striped'
-                                size='sm'
-                                colorScheme='pink'
-                            >
-                                <TableCaption placement='top'>
-                                    Latest updated cases near you
-                                </TableCaption>
-                                <Thead>
-                                    <Tr>
-                                        <Th>Suburb</Th>
-                                        <Th>Location</Th>
-                                        <Th>Time</Th>
-                                        <Th>Updated</Th>
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
-                                    {
-                                        covidCases.map(covid => {
-                                            return (
-                                                <Tr className='row'>
-                                                    <Td>{covid.suburb}</Td>
-                                                    <Td>
-                                                        <strong>{covid.venue}</strong>
-                                                        <p className='faded'>{covid.address}</p>
-                                                    </Td>
-                                                    <Td>
-                                                        {
-                                                            covid.times.map(time => {
-                                                                return (
-                                                                    <div className='caseDate'>
-                                                                        <p className='slightEmphasis'>{time.date}</p>
-                                                                        <p className='faded'>{time.time}</p>
-                                                                    </div>
-                                                                );
-                                                            })
-                                                        }
-                                                    </Td>
-                                                    <Td>{covid.updated}</Td>
-                                                </Tr>
-                                            );
-                                        })
-                                    }
-                                </Tbody>
-                            </Table>
-                        </div>
-                        : null
-                }
+                {renderTable()}
                 <div className='subscribe'>
                     <AutoComplete
                         rollNavigation
