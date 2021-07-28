@@ -91,7 +91,7 @@ app.get('/nearCases', async (req, res, next) => {
     }
 
     try {
-        const cases = await covidFetcher.fetchCases(id);
+        const cases = await covidFetcher.fetchCases({ uuid: id });
         if (!cases.length) {
             res.json([]);
             return;

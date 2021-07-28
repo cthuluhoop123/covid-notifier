@@ -1,7 +1,7 @@
 self.addEventListener('push', ev => {
-    const data = JSON.parse(ev.data.json());
+    const data = ev.data.json();
     self.registration.showNotification('New cases near you', {
-        body: `Latest locations: \n${data.sort().join('\n')}`,
+        body: `New Locations today: \n${data.join('\n')}`,
         actions: [
             {
                 action: 'view',

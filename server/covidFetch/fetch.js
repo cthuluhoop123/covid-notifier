@@ -5,18 +5,19 @@ const dataEndpoint = 'https://data.nsw.gov.au/data/dataset/0a52e6c1-bc0b-48af-8b
 const request = require('superagent');
 
 const db = require('../database/database.js');
+const cache = require('../database/cache.js');
 const suburbs = require('../database/suburbs.json');
 
 const webPush = require('web-push');
 webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, process.env.PRIVATE_VAPID);
 
-async function fetchCases(uuid) {
-    const res = await request.get(dataEndpoint);
-    const casesToday = res.body.data.monitor
+async function fetchCases({ uuid, maxAge = 3 }) {
+    const casesToday = cache.cases.data.monitor
         .filter(covidCase => {
             const caseDate = new Date(covidCase['Last updated date']);
             const today = new Date();
-            return today - caseDate <= 1000 * 60 * 60 * 24 * 100;
+            today.setHours(0, 0, 0, 0);
+            return today - caseDate <= 1000 * 60 * 60 * 24 * maxAge;
         })
         .sort((a, b) => new Date(b['Last updated date']) - new Date(a['Last updated date']));
 
@@ -25,7 +26,16 @@ async function fetchCases(uuid) {
 
     for (const user of users) {
         const data = { nearCases: [] };
-
+        const [subscription] = await db.getSubscriptions(user.userId);
+        if (subscription) {
+            data.subscription = {
+                userId: subscription.userId,
+                endpoint: subscription.endpoint,
+                p256dh: subscription.p256dh,
+                auth: subscription.auth
+            };
+        }
+        const firstPostcodeSuburb = suburbs.find(suburb => suburb.sid === user.postcodeSIDs[0]);
         for (const postcodeSID of user.postcodeSIDs) {
             const userSuburb = suburbs.find(suburb => suburb.sid === postcodeSID);
             data.nearCases.push(
@@ -44,7 +54,11 @@ async function fetchCases(uuid) {
                             date: data.Date,
                             time: data.Time,
                             adviceHTML: data.HealthAdviceHTML,
-                            updated: data['Last updated date']
+                            updated: data['Last updated date'],
+                            distance: distance(
+                                Number(data.Lat), Number(data.Lon),
+                                Number(firstPostcodeSuburb.lat), Number(firstPostcodeSuburb.lng)
+                            )
                         }
                     })
             );
@@ -56,26 +70,6 @@ async function fetchCases(uuid) {
     return nearCases;
 }
 
-// fetchCases('4d506f39-d4c2-4b15-a448-05351c4170bd')
-//     .then(data => {
-//         const nearCases = data[0].nearCases;
-//         const venues = nearCases.map(covid => covid.venue);
-
-//         const payload = JSON.stringify(JSON.stringify(venues));
-
-//         webPush.sendNotification({
-//             endpoint: data[0].endpoint,
-//             keys: {
-//                 p256dh: data[0].p256dh,
-//                 auth: data[0].auth
-//             }
-//         }, payload).catch(error => {
-//             console.error(error);
-//         });
-//     })
-//     .catch(console.error);
-
-
 // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 function distance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;    // Math.PI / 180
@@ -86,6 +80,5 @@ function distance(lat1, lon1, lat2, lon2) {
 
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
-
 
 module.exports = { fetchCases };

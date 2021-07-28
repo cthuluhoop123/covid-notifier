@@ -11,7 +11,8 @@ module.exports = {
     async getUsers(uuid) {
         const query = knex('users')
             .select()
-            .innerJoin('postcode_sids', 'users.id', 'postcode_sids.user_id');
+            .innerJoin('postcode_sids', 'users.id', 'postcode_sids.user_id')
+            .orderBy('postcode_sids.index', 'asc');
 
         if (uuid) {
             query.where('users.id', uuid);
@@ -31,6 +32,25 @@ module.exports = {
             });
             return acc;
         }, []);
+    },
+    async notificationsSent(serviceNSWCases) {
+        const keys = serviceNSWCases.map(nswCase => caseToKey(nswCase));
+        return Promise.all(
+            keys.map(key => {
+                return knex('notifications_sent')
+                    .insert({
+                        case_key: key
+                    })
+                    .onConflict('case_key')
+                    .ignore();
+            })
+        );
+    },
+    async alreadyNotified(serviceNSWCase) {
+        const key = caseToKey(serviceNSWCase);
+        const sent = await knex('notifications_sent')
+            .where('case_key', key);
+        return sent.length > 0;
     },
     async getSubscriptions(uuid) {
         const query = knex('subscriptions')
@@ -74,11 +94,12 @@ module.exports = {
             .del();
 
         await Promise.all(
-            postcodeSIDs.map(sid => {
+            postcodeSIDs.map((sid, index) => {
                 return knex('postcode_sids')
                     .insert({
                         user_id: uuid,
-                        postcode_sid: sid
+                        postcode_sid: sid,
+                        index
                     })
             })
         );
@@ -91,7 +112,8 @@ module.exports = {
         }
 
         const result = await knex('postcode_sids')
-            .where('user_id', uuid);
+            .where('user_id', uuid)
+            .orderBy('index', 'asc');
 
         return result.map(entry => {
             return entry.postcode_sid;
@@ -117,3 +139,13 @@ module.exports = {
             .merge();
     }
 };
+
+
+function caseToKey(covidCase) {
+    return covidCase.venue
+        + covidCase.address
+        + covidCase.suburb
+        + covidCase.date
+        + covidCase.time
+        + covidCase.updated;
+}

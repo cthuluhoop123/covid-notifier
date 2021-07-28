@@ -95,9 +95,7 @@ function App() {
                 .get(process.env.REACT_APP_SERVER + '/configuration')
                 .query({ id: uuid })
                 .then(res => {
-                    setPostcodeSIDs(
-                        res.body.sort((a, b) => a.suburb.localeCompare(b.suburb))
-                    );
+                    setPostcodeSIDs(res.body);
                 });
 
             request
@@ -121,7 +119,8 @@ function App() {
                                         }],
                                         suburb: cur.suburb,
                                         updated: cur.updated,
-                                        venue: cur.venue
+                                        venue: cur.venue,
+                                        distance: cur.distance
                                     });
                                 } else {
                                     existing.times.push({
@@ -131,7 +130,16 @@ function App() {
                                 }
                                 return acc;
                             }, [])
-                            .sort((a, b) => new Date(b.updated) - new Date(a.updated))
+                            .sort((a, b) => {
+                                // Sort by distance and then by recency
+                                const distanceDiff = a.distance - b.distance;
+                                const dateDiff = new Date(b.updated) - new Date(a.updated);
+                                if (dateDiff !== 0) {
+                                    return dateDiff;
+                                } else {
+                                    return distanceDiff
+                                }
+                            })
                     );
                 });
         }
@@ -167,9 +175,7 @@ function App() {
                 postcodeSIDs: newPostcodeSIDs
             })
             .then(res => {
-                setPostcodeSIDs(
-                    res.body.sort((a, b) => a.suburb.localeCompare(b.suburb))
-                );
+                setPostcodeSIDs(res.body);
 
                 if (!remove) {
                     toast({

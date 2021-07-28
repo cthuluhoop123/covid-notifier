@@ -13,6 +13,7 @@ const knex = require('knex')({
 knex.schema
     .createTable('users', table => {
         table.string('id').primary();
+        table.timestamps(false, true);
     })
     .createTable('postcode_sids', table => {
         table
@@ -20,7 +21,12 @@ knex.schema
             .references('users.id');
 
         table
+            .integer('index');
+
+        table
             .string('postcode_sid');
+
+        table.timestamps(false, true);
 
         table.unique(['user_id', 'postcode_sid']);
     })
@@ -38,6 +44,15 @@ knex.schema
 
         table
             .string('auth');
+
+        table.timestamps(false, true);
+    })
+    .createTable('notifications_sent', table => {
+        table
+            .string('case_key')
+            .unique();
+
+        table.timestamps(false, true);
     })
     .catch(e => {
         console.error(e);
