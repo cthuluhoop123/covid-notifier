@@ -105,6 +105,10 @@ app.get('/nearCases', async (req, res, next) => {
 
 app.use('/subscribe', notifications);
 
+app.use('/*', (req, res) => {
+    res.send('404');
+});
+
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({
