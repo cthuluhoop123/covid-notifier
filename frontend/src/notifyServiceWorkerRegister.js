@@ -1,7 +1,4 @@
-import request from 'superagent';
-
 const vapidKey = process.env.REACT_APP_PUBLIC_VAPID;
-
 
 async function run() {
     const registration = await navigator.serviceWorker

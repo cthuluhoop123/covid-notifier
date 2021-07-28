@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import request from 'superagent';
@@ -7,7 +7,6 @@ import notifySw from './notifyServiceWorkerRegister.js';
 
 import {
     Heading,
-    Input,
     Text,
     UnorderedList,
     Skeleton,
@@ -17,13 +16,11 @@ import {
     Table,
     Thead,
     Tbody,
-    Tfoot,
     Tr,
     Th,
     Td,
     useColorMode,
     TableCaption,
-    Center,
     ScaleFade
 } from '@chakra-ui/react';
 
@@ -219,9 +216,9 @@ function App() {
             return <Text fontSize='sm'>Nothing yet. Add a few suburbs :)</Text>
         }
 
-        return postcodeSIDs.map(postcode => {
+        return postcodeSIDs.map((postcode, i) => {
             return (
-                <SimpleGrid columns={2} spacing={1} className='alignWithIcon'>
+                <SimpleGrid key={i} columns={2} spacing={1} className='alignWithIcon'>
                     <Box>
                         <Text fontSize='sm'>{postcode.suburb} ({postcode.postcode})</Text>
                     </Box>
@@ -281,9 +278,9 @@ function App() {
                         </Thead>
                         <Tbody>
                             {
-                                covidCases.map(covid => {
+                                covidCases.map((covid, i) => {
                                     return (
-                                        <Tr className='row'>
+                                        <Tr key={i} className='row'>
                                             <Td>{covid.suburb}</Td>
                                             <Td>
                                                 <strong>{covid.venue}</strong>
@@ -291,9 +288,9 @@ function App() {
                                             </Td>
                                             <Td>
                                                 {
-                                                    covid.times.map(time => {
+                                                    covid.times.map((time, i) => {
                                                         return (
-                                                            <div className='caseDate'>
+                                                            <div key={i} className='caseDate'>
                                                                 <p className='slightEmphasis'>{time.date}</p>
                                                                 <p className='faded'>{time.time}</p>
                                                             </div>
