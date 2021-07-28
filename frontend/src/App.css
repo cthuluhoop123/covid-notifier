@@ -16,7 +16,7 @@
 }
 
 p.faded {
-    opacity: 80%;
+    opacity: 0.8;
 }
 
 .caseTable {
@@ -28,7 +28,7 @@ p.faded {
 }
 
 .iconText {
-    opacity: 50%;
+    opacity: 0.5;
     font-size: .5rem;
 }
 
