@@ -335,8 +335,15 @@ function App() {
                             return value.trim().length >= 3;
                         }}
                         maxSuggestions={5}
+                        closeOnselect={false}
+                        emptyState={'I couldn\'t find that postcode :('}
                     >
                         <AutoCompleteInput
+                            onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                }
+                            }}
                             variant='filled'
                             isInvalid={error}
                             placeholder='Add a suburb by postcode...'
@@ -382,7 +389,7 @@ function App() {
                     </div>
                 </div>
             </div >
-        </div>
+        </div >
     );
 }
 
