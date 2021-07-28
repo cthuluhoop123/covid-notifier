@@ -11,12 +11,12 @@ const covidFetcher = require('./covidFetch/fetch.js');
 
 const suburbs = require('./database/suburbs.json');
 
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-app.use(cors());
 
 
 app.post('/configure', async (req, res, next) => {
