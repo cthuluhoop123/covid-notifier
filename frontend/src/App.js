@@ -333,7 +333,6 @@ function App() {
                         }}
                         maxSuggestions={5}
                         closeOnselect={false}
-                        emptyState={'I couldn\'t find that postcode :('}
                     >
                         <AutoCompleteInput
                             onKeyDown={e => {
