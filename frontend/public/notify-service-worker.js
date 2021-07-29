@@ -43,3 +43,20 @@ self.addEventListener('notificationclick', event => {
             })
     );
 });
+
+self.addEventListener('pushsubscriptionchange', function (event) {
+    event.waitUntil(
+        fetch('https://api.nswcases.com/subscribe/resub', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                oldEndpoint: event.oldSubscription ? event.oldSubscription.endpoint : null,
+                newSub: {
+                    newEndpoint: event.newSubscription ? event.newSubscription.endpoint : null,
+                    newP256dh: event.newSubscription ? event.newSubscription.toJSON().keys.p256dh : null,
+                    newAuth: event.newSubscription ? event.newSubscription.toJSON().keys.auth : null
+                }
+            })
+        })
+    );
+});

@@ -17,4 +17,14 @@ router.post('/sub', async (req, res, next) => {
     }
 });
 
+router.post('/resub', async (req, res, next) => {
+    const { oldEndpoint, newSub } = req.body;
+    try {
+        await db.renewSubscription(oldEndpoint, newSub);
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;

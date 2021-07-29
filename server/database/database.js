@@ -137,6 +137,15 @@ module.exports = {
             })
             .onConflict('user_id')
             .merge();
+    },
+    async renewSubscription(oldEndpoint, newData) {
+        return knex('subscriptions')
+            .update({
+                endpoint: newData.newEndpoint,
+                p256dh: newData.newP256dh,
+                auth: newData.newAuth
+            })
+            .where('subscriptions.endpoint', oldEndpoint);
     }
 };
 
