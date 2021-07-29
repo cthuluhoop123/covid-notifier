@@ -13,7 +13,7 @@ const { notificationsSent } = require('../database/database.js');
 webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, process.env.PRIVATE_VAPID);
 
 
-schedule.scheduleJob('0 */1 * * *', () => {
+schedule.scheduleJob('0 * * * *', () => {
     fetch().catch(err => { console.error(err) });
 });
 
