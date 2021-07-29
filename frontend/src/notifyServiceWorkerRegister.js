@@ -1,7 +1,7 @@
 const vapidKey = process.env.REACT_APP_PUBLIC_VAPID;
 
 async function run() {
-    //await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.ready;
     const registration = await navigator.serviceWorker.getRegistration();
     const subscription = await registration.pushManager
         .subscribe({
