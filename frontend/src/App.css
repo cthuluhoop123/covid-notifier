@@ -60,3 +60,12 @@ p.slightEmphasis {
 .externals a {
     margin-right: 1.5rem;
 }
+
+#lastUpdated {
+    margin-top: 211rem;
+    opacity: 0.6;
+}
+
+#lastUpdated:hover {
+    cursor: pointer;
+}

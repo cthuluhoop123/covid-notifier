@@ -21,7 +21,7 @@ import {
     Td,
     useColorMode,
     TableCaption,
-    ScaleFade
+    SlideFade
 } from '@chakra-ui/react';
 
 import {
@@ -35,7 +35,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 
 
 function App() {
-    const { colorMode, toggleColorMode } = useColorMode();
+    const { toggleColorMode } = useColorMode();
 
     const [uuid, setUuid] = useState(localStorage.getItem('id'));
     const [postcodeSIDs, setPostcodeSIDs] = useState(null);
@@ -100,6 +100,24 @@ function App() {
     }, []);
 
     useEffect(() => {
+        if (!uuid) {
+            return;
+        }
+        updateNearCases();
+    }, [postcodeSIDs]);
+
+    useEffect(() => {
+        if (error) {
+            toast({
+                title: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+    }, [error]);
+
+    const updateNearCases = () => {
         request
             .get(process.env.REACT_APP_SERVER + '/nearCases')
             .query({ id: uuid })
@@ -143,19 +161,11 @@ function App() {
                             }
                         })
                 );
-            });
-    }, [postcodeSIDs]);
-
-    useEffect(() => {
-        if (error) {
-            toast({
-                title: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
             })
-        }
-    }, [error])
+            .catch(err => {
+                console.error(err);
+            });
+    };
 
     const configure = (newSuburbSID, remove = false) => {
         if (!newSuburbSID) {
@@ -250,65 +260,96 @@ function App() {
             return <Skeleton height='60px' />;
         }
 
+        const components = [];
+
         if (!covidCases.length) {
-            return (
-                <ScaleFade in={true}>
+            components.push(
+                <SlideFade key={0} in={true}>
                     <Text fontSize='sm'>No cases near you. Neat!</Text>
-                </ScaleFade>
+                </SlideFade>
+            );
+        } else {
+            components.push(
+                <SlideFade key={1} in={true}>
+                    <div className='caseTable'>
+                        <Table
+                            variant='striped'
+                            size='sm'
+                            colorScheme='pink'
+                        >
+                            <TableCaption placement='top'>
+                                Latest updated cases near you
+                    </TableCaption>
+                            <Thead>
+                                <Tr>
+                                    <Th>Suburb</Th>
+                                    <Th>Location</Th>
+                                    <Th>Time</Th>
+                                    <Th>Updated</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {
+                                    covidCases.map((covid, i) => {
+                                        return (
+                                            <Tr key={i} className='row'>
+                                                <Td>{covid.suburb}</Td>
+                                                <Td>
+                                                    <strong>{covid.venue}</strong>
+                                                    <p className='faded'>{covid.address}</p>
+                                                </Td>
+                                                <Td>
+                                                    {
+                                                        covid.times.map((time, i) => {
+                                                            return (
+                                                                <div key={i} className='caseDate'>
+                                                                    <p className='slightEmphasis'>{time.date}</p>
+                                                                    <p className='faded'>{time.time}</p>
+                                                                </div>
+                                                            );
+                                                        })
+                                                    }
+                                                </Td>
+                                                <Td>{covid.updated}</Td>
+                                            </Tr>
+                                        );
+                                    })
+                                }
+                            </Tbody>
+                        </Table>
+                    </div>
+                </SlideFade>
             );
         }
 
-        return (
-            <ScaleFade in={true}>
-                <div className='caseTable'>
-                    <Table
-                        variant='striped'
-                        size='sm'
-                        colorScheme='pink'
-                    >
-                        <TableCaption placement='top'>
-                            Latest updated cases near you
-                    </TableCaption>
-                        <Thead>
-                            <Tr>
-                                <Th>Suburb</Th>
-                                <Th>Location</Th>
-                                <Th>Time</Th>
-                                <Th>Updated</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {
-                                covidCases.map((covid, i) => {
-                                    return (
-                                        <Tr key={i} className='row'>
-                                            <Td>{covid.suburb}</Td>
-                                            <Td>
-                                                <strong>{covid.venue}</strong>
-                                                <p className='faded'>{covid.address}</p>
-                                            </Td>
-                                            <Td>
-                                                {
-                                                    covid.times.map((time, i) => {
-                                                        return (
-                                                            <div key={i} className='caseDate'>
-                                                                <p className='slightEmphasis'>{time.date}</p>
-                                                                <p className='faded'>{time.time}</p>
-                                                            </div>
-                                                        );
-                                                    })
-                                                }
-                                            </Td>
-                                            <Td>{covid.updated}</Td>
-                                        </Tr>
-                                    );
-                                })
-                            }
-                        </Tbody>
-                    </Table>
-                </div>
-            </ScaleFade>
+        const now = new Date();
+
+        components.push(
+            <Text
+                key={2}
+                id='lastUpdated'
+                size='sm'
+                as='sub'
+                onClick={() => {
+                    setCovidCases(null);
+                    updateNearCases();
+                }}
+            >
+                Last updated: {
+                    now
+                        .getHours()
+                        .toString()
+                        .padStart(2, 0)
+                }:{
+                    now
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, 0)
+                }
+            </Text>
         );
+
+        return components;
     };
 
     return (
@@ -330,7 +371,7 @@ function App() {
                     <Text size='sm' as='sup'>
                         <a href='https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx#local'>
                             See latest cases →
-                    </a>
+                        </a>
                     </Text>
                 </div>
                 {renderTable()}
@@ -363,10 +404,10 @@ function App() {
                         <AutoCompleteList>
                             {
                                 suburbs
-                                    ? suburbs.map(suburb => {
+                                    ? suburbs.map((suburb, i) => {
                                         return (
                                             <AutoCompleteItem
-                                                key={suburb.sid}
+                                                key={i}
                                                 value={suburb.postcode}
                                                 data-sid={suburb.sid}
                                                 onClick={e => {
