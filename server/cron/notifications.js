@@ -61,15 +61,20 @@ async function fetch() {
                 })
         );
 
-        webPush.sendNotification({
+        await webPush.sendNotification({
             endpoint: subscription.endpoint,
             keys: {
                 p256dh: subscription.p256dh,
                 auth: subscription.auth
             }
         }, payload).catch(error => {
+            if (error.statusCode === 410) {
+                // Expired/unsubbed
+                db.deleteSubscription(endpoint).catch(err => { });
+                return;
+            }
             console.error(error);
-        }).catch(err => { });
+        });
     }
 
     await notificationsSent(markAsSent).catch(err => {

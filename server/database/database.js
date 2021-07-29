@@ -138,7 +138,7 @@ module.exports = {
             .onConflict('user_id')
             .merge();
     },
-    async renewSubscription(oldEndpoint, newData) {
+    renewSubscription(oldEndpoint, newData) {
         return knex('subscriptions')
             .update({
                 endpoint: newData.newEndpoint,
@@ -146,6 +146,11 @@ module.exports = {
                 auth: newData.newAuth
             })
             .where('subscriptions.endpoint', oldEndpoint);
+    },
+    deleteSubscription(endpoint) {
+        return knex('subscriptions')
+            .where('subscriptions.endpoint', endpoint)
+            .del();
     }
 };
 
