@@ -70,7 +70,7 @@ async function fetch() {
         }, payload).catch(error => {
             if (error.statusCode === 410) {
                 // Expired/unsubbed
-                db.deleteSubscription(endpoint).catch(err => { });
+                db.deleteSubscription(error.endpoint).catch(err => { });
                 return;
             }
             console.error(error);
