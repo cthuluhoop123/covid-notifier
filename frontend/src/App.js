@@ -100,7 +100,7 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (!uuid) {
+        if (!uuid || !postcodeSIDs) {
             return;
         }
         updateNearCases();
