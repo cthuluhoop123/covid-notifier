@@ -303,8 +303,8 @@ function App() {
                                                         }
                                                     >
                                                         <strong>{covid.venue}</strong>
+                                                        <p className='faded'>{covid.address}</p>
                                                     </a>
-                                                    <p className='faded'>{covid.address}</p>
                                                 </Td>
                                                 <Td>
                                                     {
