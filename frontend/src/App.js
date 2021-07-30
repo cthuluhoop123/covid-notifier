@@ -140,7 +140,8 @@ function App() {
                                     suburb: cur.suburb,
                                     updated: cur.updated,
                                     venue: cur.venue,
-                                    distance: cur.distance
+                                    distance: cur.distance,
+                                    latlng: cur.latlng
                                 });
                             } else {
                                 existing.times.push({
@@ -295,7 +296,13 @@ function App() {
                                             <Tr key={i} className='row'>
                                                 <Td>{covid.suburb}</Td>
                                                 <Td>
-                                                    <strong>{covid.venue}</strong>
+                                                    <a
+                                                        href={
+                                                            `https://www.google.com/maps/search/?api=1&query=${covid.venue} ${covid.address}`
+                                                        }
+                                                    >
+                                                        <strong>{covid.venue}</strong>
+                                                    </a>
                                                     <p className='faded'>{covid.address}</p>
                                                 </Td>
                                                 <Td>
