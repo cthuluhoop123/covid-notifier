@@ -51,6 +51,7 @@ async function fetchCases({ uuid, maxAge = 3 }) {
                             time: data.Time,
                             adviceHTML: data.HealthAdviceHTML,
                             updated: data['Last updated date'],
+                            latlng: [data.Lat, data.Lon],
                             distance: distance(
                                 Number(data.Lat), Number(data.Lon),
                                 Number(firstPostcodeSuburb.lat), Number(firstPostcodeSuburb.lng)
