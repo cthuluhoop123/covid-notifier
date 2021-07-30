@@ -80,3 +80,4 @@ typings/
 
 server/database/cases.json
 server/database/cases.json
+test.js
