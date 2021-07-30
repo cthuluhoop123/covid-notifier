@@ -297,6 +297,7 @@ function App() {
                                                 <Td>{covid.suburb}</Td>
                                                 <Td>
                                                     <a
+                                                        target='_blank'
                                                         href={
                                                             `https://www.google.com/maps/search/?api=1&query=${covid.venue} ${covid.address}`
                                                         }
