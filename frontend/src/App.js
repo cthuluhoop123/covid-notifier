@@ -21,8 +21,7 @@ import {
     Td,
     useColorMode,
     TableCaption,
-    SlideFade,
-    Tabs, TabList, TabPanels, Tab, TabPanel
+    SlideFade
 } from '@chakra-ui/react';
 
 import {
@@ -68,7 +67,7 @@ function App() {
                         status: 'error',
                         duration: 3000,
                         isClosable: true,
-                    });
+                    })
                     console.error(err.message);
                 });
         }
@@ -114,7 +113,7 @@ function App() {
                 status: 'error',
                 duration: 3000,
                 isClosable: true,
-            });
+            })
         }
     }, [error]);
 
@@ -195,14 +194,15 @@ function App() {
                         status: 'success',
                         duration: 3000,
                         isClosable: true,
-                    });
+                    })
                 } else {
                     toast({
                         title: 'Suburb deleted',
                         status: 'success',
                         duration: 3000,
                         isClosable: true,
-                    });
+                    })
+
                 }
 
                 setError('');
@@ -255,7 +255,7 @@ function App() {
             });
     };
 
-    const renderVenuesTable = () => {
+    const renderTable = () => {
         if (!covidCases) {
             return <Skeleton height='60px' />;
         }
@@ -279,7 +279,7 @@ function App() {
                         >
                             <TableCaption placement='top'>
                                 Latest updated cases near you
-                            </TableCaption>
+                    </TableCaption>
                             <Thead>
                                 <Tr>
                                     <Th>Suburb</Th>
@@ -374,30 +374,7 @@ function App() {
                         </a>
                     </Text>
                 </div>
-                <Tabs
-                    colorScheme='pink'
-                    align='center'
-                    isFitted
-                >
-                    <TabList>
-                        <Tab>Venues</Tab>
-                        <Tab
-                            _selected={{
-                                color: 'blue.400',
-                                borderColor: 'blue.400'
-                            }}
-                        >Transport</Tab>
-                    </TabList>
-
-                    <TabPanels>
-                        <TabPanel className='tables'>
-                            {renderVenuesTable()}
-                        </TabPanel>
-                        <TabPanel className='tables'>
-                            {renderVenuesTable()}
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
+                {renderTable()}
                 <div className='subscribe'>
                     <AutoComplete
                         rollNavigation
@@ -450,7 +427,7 @@ function App() {
                     <div className='subscribedList'>
                         <Heading id='interested' as='h4' size='md'>
                             Area's you're interested in:
-                        </Heading>
+                    </Heading>
                         <UnorderedList>
                             {renderSuburbs()}
                         </UnorderedList>
