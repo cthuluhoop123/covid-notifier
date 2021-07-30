@@ -372,13 +372,13 @@ function App() {
                 <br />
                 <div className='externals'>
                     <Text size='sm' as='sup'>
-                        <a href='https://www.nsw.gov.au/covid-19/nsw-covid-19-case-locations'>
+                        <a href='https://www.nsw.gov.au/covid-19/nsw-covid-19-case-locations/exposure-locations'>
                             Go to ServiceNSW →
                         </a>
                     </Text>
                     <Text size='sm' as='sup'>
                         <a href='https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx#local'>
-                            See latest cases →
+                            See latest stats →
                         </a>
                     </Text>
                 </div>
@@ -397,6 +397,7 @@ function App() {
                                     e.preventDefault();
                                 }
                             }}
+                            type='number'
                             variant='filled'
                             isInvalid={error}
                             placeholder='Add a suburb by postcode...'
