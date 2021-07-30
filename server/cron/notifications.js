@@ -51,10 +51,14 @@ async function fetch() {
         const { subscription } = userCases;
         if (!subscription) { continue; }
 
+
+
         const payload = JSON.stringify(
-            updatedToday
-                .sort((a, b) => a.distance - b.distance)
-                .slice(0, 5)
+            getNonDuplicateVenues(
+                updatedToday
+                    .sort((a, b) => a.distance - b.distance)
+                    .slice(0, 5)
+            )
                 .map(updated => {
                     return updated.venue;
                 })
@@ -76,7 +80,20 @@ async function fetch() {
         });
     }
 
-    await notificationsSent(markAsSent).catch(err => {
+    await db.notificationsSent(markAsSent).catch(err => {
         console.error(err);
     });
+}
+
+fetch();
+
+function getNonDuplicateVenues(cases) {
+    const uniqueCases = [];
+    for (const covidCase of cases) {
+        if (uniqueCases.find(unique => unique.venue === covidCase.venue)) {
+            continue;
+        }
+        uniqueCases.push(covidCase);
+    }
+    return uniqueCases;
 }

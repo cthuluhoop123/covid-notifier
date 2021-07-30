@@ -34,7 +34,7 @@ module.exports = {
         }, []);
     },
     async notificationsSent(serviceNSWCases) {
-        const keys = serviceNSWCases.map(nswCase => caseToKey(nswCase));
+        const keys = serviceNSWCases.map(nswCase => this.caseToKey(nswCase));
         return Promise.all(
             keys.map(key => {
                 return knex('notifications_sent')
@@ -47,7 +47,7 @@ module.exports = {
         );
     },
     async alreadyNotified(serviceNSWCase) {
-        const key = caseToKey(serviceNSWCase);
+        const key = this.caseToKey(serviceNSWCase);
         const sent = await knex('notifications_sent')
             .where('case_key', key);
         return sent.length > 0;
@@ -151,15 +151,13 @@ module.exports = {
         return knex('subscriptions')
             .where('subscriptions.endpoint', endpoint)
             .del();
+    },
+    caseToKey(covidCase) {
+        return covidCase.venue
+            + covidCase.address
+            + covidCase.suburb
+            + covidCase.date
+            + covidCase.time
+            + covidCase.updated;
     }
 };
-
-
-function caseToKey(covidCase) {
-    return covidCase.venue
-        + covidCase.address
-        + covidCase.suburb
-        + covidCase.date
-        + covidCase.time
-        + covidCase.updated;
-}
