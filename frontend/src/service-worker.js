@@ -108,7 +108,9 @@ self.addEventListener('notificationclick', event => {
                     }
                 }
                 if (matchingClient) {
-                    return matchingClient.focus();
+                    return matchingClient
+                        .focus()
+                        .then(client => client.navigate(appURL));
                 } else {
                     return clients.openWindow(appURL);
                 }
