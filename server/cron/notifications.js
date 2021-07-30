@@ -22,10 +22,9 @@ console.log('Job scheduled.');
 async function updateCache() {
     const res = await request.get(config.covidCasesEndpoint);
     const cases = res.data;
-    if (!cache.cases || cache.cases.date !== cases.date && cache.cases.time !== cases.time) {
-        fs.writeFileSync(path.join(__dirname, '..', 'database', 'cases.json'), JSON.stringify(cases));
-        cache.cases = cases;
-    }
+
+    fs.writeFileSync(path.join(__dirname, '..', 'database', 'cases.json'), JSON.stringify(cases));
+    cache.cases = cases;
 }
 
 async function fetch() {
