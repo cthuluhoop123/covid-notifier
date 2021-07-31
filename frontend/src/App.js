@@ -318,7 +318,9 @@ function App() {
                                                         })
                                                     }
                                                 </Td>
-                                                <Td>{covid.updated}</Td>
+                                                <Td>
+                                                    <Text as='i'>{covid.updated}</Text>
+                                                </Td>
                                             </Tr>
                                         );
                                     })
