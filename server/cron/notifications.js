@@ -13,7 +13,7 @@ const { notificationsSent } = require('../database/database.js');
 webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, process.env.PRIVATE_VAPID);
 
 
-schedule.scheduleJob('0 * * * *', () => {
+schedule.scheduleJob('*/15 * * * *', () => {
     fetch().catch(err => { console.error(err) });
 });
 
@@ -84,8 +84,6 @@ async function fetch() {
         console.error(err);
     });
 }
-
-fetch();
 
 function getNonDuplicateVenues(cases) {
     const uniqueCases = [];
