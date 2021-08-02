@@ -80,7 +80,8 @@ self.addEventListener('push', ev => {
                 title: 'View more',
             }
         ],
-        icon: 'https://cdn.pixabay.com/photo/2020/04/29/07/54/coronavirus-5107715_960_720.png',
+        badge: '/logo96.png',
+        icon: '/logo512.png',
         vibrate: [100, 100, 100],
         data: { url: self.location.origin }
     });
