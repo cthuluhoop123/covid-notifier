@@ -438,7 +438,7 @@ function App() {
                     </AutoComplete>
                     <div className='subscribedList'>
                         <Heading id='interested' as='h4' size='md'>
-                            Area's you're interested in:
+                            Areas you're interested in:
                     </Heading>
                         <UnorderedList>
                             {renderSuburbs()}
