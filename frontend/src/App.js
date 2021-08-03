@@ -64,6 +64,7 @@ function App() {
                 .catch(err => {
                     toast({
                         title: 'No notification permissions',
+                        description: 'We won\'t be able to send you notifications :(',
                         status: 'error',
                         duration: 3000,
                         isClosable: true,
