@@ -83,7 +83,7 @@ app.get('/suburbs', (req, res) => {
 });
 
 app.get('/nearCases', async (req, res, next) => {
-    const { id } = req.query;
+    const { id, maxDist } = req.query;
 
     if (!id) {
         res.status(400).json({
@@ -93,7 +93,7 @@ app.get('/nearCases', async (req, res, next) => {
     }
 
     try {
-        const cases = await covidFetcher.fetchCases({ uuid: id });
+        const cases = await covidFetcher.fetchCases({ uuid: id, maxDist });
         if (!cases.length) {
             res.json([]);
             return;

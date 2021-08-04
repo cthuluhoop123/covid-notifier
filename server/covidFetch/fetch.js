@@ -6,7 +6,7 @@ const suburbs = require('../database/suburbs.json');
 const { transportCaseEndpoint } = require('../../config.js');
 const { transport } = require('../database/cache.js');
 
-async function fetchCases({ uuid, maxAge = 3 }) {
+async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
     const casesToday = cache.cases.data.monitor
         .filter(covidCase => {
             const caseDate = new Date(covidCase['Last updated date']);
@@ -39,7 +39,7 @@ async function fetchCases({ uuid, maxAge = 3 }) {
                         return distance(
                             Number(covidCase.Lat), Number(covidCase.Lon),
                             Number(userSuburb.lat), Number(userSuburb.lng)
-                        ) <= 10;
+                        ) <= maxDist;
                     })
                     .map(data => {
                         return {
@@ -79,7 +79,7 @@ function fetchTransportCases(maxAge = 3) {
     const trains = [];
     const buses = [];
     const metro = [];
-    
+
     for (const transportCase of transportCasesToday) {
         if (transportCase.by === 'Bus') {
             buses.push(transportCase);

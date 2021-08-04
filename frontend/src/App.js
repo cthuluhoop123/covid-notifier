@@ -13,12 +13,11 @@ import {
     useToast,
     SimpleGrid,
     Box,
-    SlideFade,
     Tabs,
     TabList,
     TabPanels,
     Tab,
-    TabPanel
+    TabPanel,
 } from '@chakra-ui/react';
 
 import {
@@ -37,7 +36,6 @@ import Navbar from './Components/Navbar.js';
 import MetroTable from './Components/MetroTable';
 
 function App() {
-
     const [uuid, setUuid] = useState(localStorage.getItem('id'));
     const [postcodeSIDs, setPostcodeSIDs] = useState(null);
 
@@ -47,6 +45,8 @@ function App() {
 
     const [covidCases, setCovidCases] = useState(null);
     const [transportCases, setTransportCases] = useState(null);
+
+    const [maxDist, setMaxDist] = useState(Number(localStorage.getItem('maxDistance')) || 10);
 
     const [error, setError] = useState('');
 
@@ -70,7 +70,7 @@ function App() {
                         status: 'error',
                         duration: 3000,
                         isClosable: true,
-                    })
+                    });
                     console.error(err.message);
                 });
         }
@@ -107,7 +107,7 @@ function App() {
             return;
         }
         updateNearCases();
-    }, [postcodeSIDs]);
+    }, [postcodeSIDs, maxDist]);
 
     useEffect(() => {
         if (error) {
@@ -123,7 +123,7 @@ function App() {
     const updateNearCases = () => {
         request
             .get(process.env.REACT_APP_SERVER + '/nearCases')
-            .query({ id: uuid })
+            .query({ id: uuid, maxDist })
             .then(res => {
                 setCovidCases(
                     res.body
@@ -353,7 +353,7 @@ function App() {
     return (
         <div className='container'>
             <div className='content'>
-                <Navbar />
+                <Navbar maxDist={maxDist} setMaxDist={setMaxDist} />
                 <br />
                 <div className='externals'>
                     <Text size='sm' as='sup'>
