@@ -47,7 +47,11 @@ function Navbar(props) {
                 <IconButton
                     aria-label='dark mode'
                     icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                    onClick={() => toggleColorMode()}
+                    onClick={() => {
+                        // bleh...
+                        document.documentElement.style.setProperty('color-scheme', colorMode === 'light' ? 'dark' : 'light');
+                        toggleColorMode();
+                    }}
                 />
                 <IconButton
                     aria-label='dark mode'
@@ -55,7 +59,11 @@ function Navbar(props) {
                     icon={<SettingsIcon />}
                 />
             </div>
-            <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+            <Modal
+                blockScrollOnMount={false}
+                isOpen={isOpen}
+                onClose={onClose}
+            >
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Settings</ModalHeader>

@@ -17,6 +17,7 @@ import {
     TabList,
     TabPanels,
     Tab,
+    useColorMode,
     TabPanel,
 } from '@chakra-ui/react';
 
@@ -50,6 +51,8 @@ function App() {
 
     const [error, setError] = useState('');
 
+    const { colorMode } = useColorMode();
+
     const toast = useToast();
 
     const registerNotifications = uuid => {
@@ -75,6 +78,10 @@ function App() {
                 });
         }
     };
+
+    useEffect(() => {
+        document.documentElement.style.setProperty('color-scheme', colorMode);
+    });
 
     useEffect(() => {
         if (!uuid) {
