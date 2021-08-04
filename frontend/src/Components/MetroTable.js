@@ -38,17 +38,17 @@ function MetroTable({ cases }) {
                 </Thead>
                 <Tbody>
                     {
-                        cases.metro.map((trainCase, i) => {
+                        cases.metro.map((metroCase, i) => {
                             return (
                                 <Tr key={i} className='row'>
-                                    <Td>{trainCase.route}</Td>
-                                    <Td><strong>{trainCase.start_location}</strong> - <strong>{trainCase.end_location}</strong></Td>
+                                    <Td>{metroCase.route}</Td>
+                                    <Td><strong>{metroCase.start_location}</strong> - <strong>{metroCase.end_location}</strong></Td>
                                     <Td>
-                                        <p className='slightEmphasis'>{trainCase.date_of_exposure}</p>
-                                        <p className='faded'>{trainCase.time_of_exposure}</p>
+                                        <p className='slightEmphasis'>{metroCase.date_of_exposure}</p>
+                                        <p className='faded'>{metroCase.time_of_exposure}</p>
                                     </Td>
                                     <Td>
-                                        <Text as='i'>{trainCase.last_updated}</Text>
+                                        <Text as='i'>{metroCase.last_updated}</Text>
                                     </Td>
                                 </Tr>
                             );

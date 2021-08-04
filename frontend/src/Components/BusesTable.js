@@ -38,17 +38,17 @@ function BusesTable({ cases }) {
                 </Thead>
                 <Tbody>
                     {
-                        cases.buses.map((trainCase, i) => {
+                        cases.buses.map((busCase, i) => {
                             return (
                                 <Tr key={i} className='row'>
-                                    <Td>{trainCase.route}</Td>
-                                    <Td><strong>{trainCase.start_location}</strong> - <strong>{trainCase.end_location}</strong></Td>
+                                    <Td>{busCase.route}</Td>
+                                    <Td><strong>{busCase.start_location}</strong> - <strong>{busCase.end_location}</strong></Td>
                                     <Td>
-                                        <p className='slightEmphasis'>{trainCase.date_of_exposure}</p>
-                                        <p className='faded'>{trainCase.time_of_exposure}</p>
+                                        <p className='slightEmphasis'>{busCase.date_of_exposure}</p>
+                                        <p className='faded'>{busCase.time_of_exposure}</p>
                                     </Td>
                                     <Td>
-                                        <Text as='i'>{trainCase.last_updated}</Text>
+                                        <Text as='i'>{busCase.last_updated}</Text>
                                     </Td>
                                 </Tr>
                             );
