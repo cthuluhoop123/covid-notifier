@@ -81,3 +81,11 @@ nav {
 
 .tableCaption {
 }
+
+.noCases {
+    padding: 1rem;
+}
+
+.navbarButtons button {
+    margin-right: .7rem;
+}

@@ -15,8 +15,8 @@ function TrainsTable({ cases }) {
     if (!cases) {
         return <Skeleton height='60px' />;
     }
-    if (!cases.length) {
-        <Text fontSize='sm'>No recent public transport cases...🤔</Text>;
+    if (!cases.trains.length) {
+        return <Text className='noCases' fontSize='md'>No recent public train cases...🤔</Text>;
     }
     return (
         <SlideFade key={1} in={true}>

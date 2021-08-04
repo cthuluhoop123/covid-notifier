@@ -15,8 +15,8 @@ function BusesTable({ cases }) {
     if (!cases) {
         return <Skeleton height='60px' />;
     }
-    if (!cases.length) {
-        <Text fontSize='sm'>No recent public transport cases...🤔</Text>;
+    if (!cases.buses.length) {
+        return <Text className='noCases' fontSize='md'>No recent bus cases...🤔</Text>;
     }
     return (
         <SlideFade key={1} in={true}>

@@ -16,7 +16,7 @@ function VenuesTable({ cases }) {
         return <Skeleton height='60px' />;
     }
     if (!cases.length) {
-        <Text fontSize='sm'>No cases near you. Neat!</Text>;
+        return <Text className='noCases' fontSize='md'>No cases near you. Neat!</Text>;
     }
     return (
         <SlideFade key={1} in={true}>

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 
 
-import {MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon, SettingsIcon } from '@chakra-ui/icons';
 
 function Navbar() {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -25,11 +25,17 @@ function Navbar() {
             >
                 <span className='heading'>COVID-19</span>
             </Heading>
-            <IconButton
-                aria-label='dark mode'
-                icon={colorMode === 'light' ? <MoonIcon color='black' /> : <SunIcon color='white' />}
-                onClick={() => toggleColorMode()}
-            />
+            <div className='navbarButtons'>
+                <IconButton
+                    aria-label='dark mode'
+                    icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                    onClick={() => toggleColorMode()}
+                />
+                <IconButton
+                    aria-label='dark mode'
+                    icon={<SettingsIcon />}
+                />
+            </div>
         </nav>
     );
 }

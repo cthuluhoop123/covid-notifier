@@ -268,55 +268,55 @@ function App() {
 
     const renderTable = () => {
         const components = [
-                <Tabs
-                    colorScheme='pink'
-                    align='center'
-                    isFitted
-                >
-                    <TabList>
-                        <Tab>Venues</Tab>
-                        <Tab
-                            _selected={{
-                                color: 'sydneyTrains.500',
-                                borderColor: 'sydneyTrains.500'
-                            }}
-                        >
-                            Trains
+            <Tabs
+                colorScheme='pink'
+                align='center'
+                isFitted
+            >
+                <TabList>
+                    <Tab>Venues</Tab>
+                    <Tab
+                        _selected={{
+                            color: 'sydneyTrains.500',
+                            borderColor: 'sydneyTrains.500'
+                        }}
+                    >
+                        Trains
                         </Tab>
-                        <Tab
-                            _selected={{
-                                color: 'sydneyBuses.500',
-                                borderColor: 'sydneyBuses.500'
-                            }}
-                        >
-                            Buses
+                    <Tab
+                        _selected={{
+                            color: 'sydneyBuses.500',
+                            borderColor: 'sydneyBuses.500'
+                        }}
+                    >
+                        Buses
                         </Tab>
-                        <Tab
-                            _selected={{
-                                color: 'sydneyMetro.500',
-                                borderColor: 'sydneyMetro.500'
-                            }}
-                        >
-                            Metro
+                    <Tab
+                        _selected={{
+                            color: 'sydneyMetro.500',
+                            borderColor: 'sydneyMetro.500'
+                        }}
+                    >
+                        Metro
                         </Tab>
-                    </TabList>
-                    <div className='caseTable'>
-                        <TabPanels>
-                            <TabPanel className='tables'>
-                                <CasesTable cases={covidCases} />
-                            </TabPanel>
-                            <TabPanel className='tables'>
-                                <TrainsTable cases={transportCases} />
-                            </TabPanel>
-                            <TabPanel className='tables'>
-                                <BusesTable cases={transportCases} />
-                            </TabPanel>
-                            <TabPanel className='tables'>
-                                <MetroTable cases={transportCases} />
-                            </TabPanel>
-                        </TabPanels>
-                    </div>
-                </Tabs>
+                </TabList>
+                <div className='caseTable'>
+                    <TabPanels>
+                        <TabPanel className='tables'>
+                            <CasesTable cases={covidCases} />
+                        </TabPanel>
+                        <TabPanel className='tables'>
+                            <TrainsTable cases={transportCases} />
+                        </TabPanel>
+                        <TabPanel className='tables'>
+                            <BusesTable cases={transportCases} />
+                        </TabPanel>
+                        <TabPanel className='tables'>
+                            <MetroTable cases={transportCases} />
+                        </TabPanel>
+                    </TabPanels>
+                </div>
+            </Tabs>
         ];
 
         const now = new Date();
