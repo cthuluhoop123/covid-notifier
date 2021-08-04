@@ -20,11 +20,16 @@ schedule.scheduleJob('*/15 * * * *', () => {
 console.log('Job scheduled.');
 
 async function updateCache() {
-    const res = await request.get(config.covidCasesEndpoint);
-    const cases = res.data;
+    const casesRes = request.get(config.covidCasesEndpoint);
+    const transportRes = request.get(config.transportCaseEndpoint);
 
+    const cases = (await casesRes).data;
     fs.writeFileSync(path.join(__dirname, '..', 'database', 'cases.json'), JSON.stringify(cases));
     cache.cases = cases;
+
+    const transport = (await transportRes).data;
+    fs.writeFileSync(path.join(__dirname, '..', 'database', 'transport.json'), JSON.stringify(transport));
+    cache.transport = transport;
 }
 
 async function fetch() {

@@ -3,9 +3,8 @@ require('dotenv').config();
 const db = require('../database/database.js');
 const cache = require('../database/cache.js');
 const suburbs = require('../database/suburbs.json');
-
-const webPush = require('web-push');
-webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, process.env.PRIVATE_VAPID);
+const { transportCaseEndpoint } = require('../../config.js');
+const { transport } = require('../database/cache.js');
 
 async function fetchCases({ uuid, maxAge = 3 }) {
     const casesToday = cache.cases.data.monitor
@@ -40,7 +39,7 @@ async function fetchCases({ uuid, maxAge = 3 }) {
                         return distance(
                             Number(covidCase.Lat), Number(covidCase.Lon),
                             Number(userSuburb.lat), Number(userSuburb.lng)
-                        ) <= 12;
+                        ) <= 10;
                     })
                     .map(data => {
                         return {
@@ -67,6 +66,35 @@ async function fetchCases({ uuid, maxAge = 3 }) {
     return nearCases;
 }
 
+function fetchTransportCases(maxAge = 6) {
+    const transportCasesToday = cache.transport.data
+        .filter(transportCase => {
+            const caseDate = new Date(transportCase.last_updated);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return today - caseDate <= 1000 * 60 * 60 * 24 * maxAge;
+        })
+        .sort((a, b) => new Date(b.last_updated) - new Date(a.last_updated));
+
+    const trains = [];
+    const buses = [];
+    const metro = [];
+    
+    for (const transportCase of transportCasesToday) {
+        if (transportCase.by === 'Bus') {
+            buses.push(transportCase);
+        }
+        if (transportCase.by === 'Train') {
+            trains.push(transportCase);
+        }
+        if (transportCase.by === 'Metro') {
+            metro.push(transportCase);
+        }
+    }
+
+    return { trains, buses, metro };
+}
+
 // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 function distance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;    // Math.PI / 180
@@ -78,4 +106,4 @@ function distance(lat1, lon1, lat2, lon2) {
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
 
-module.exports = { fetchCases };
+module.exports = { fetchCases, fetchTransportCases };

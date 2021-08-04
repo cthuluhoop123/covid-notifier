@@ -1,3 +1,4 @@
 module.exports = {
-    cases: null
+    cases: null,
+    transport: null
 };

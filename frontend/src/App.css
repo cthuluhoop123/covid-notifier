@@ -42,7 +42,7 @@ p.faded {
 }
 
 .caseTable {
-    max-height: 600px;
+    max-height: 65vh;
 }
 
 .caseDate {
@@ -62,7 +62,6 @@ p.slightEmphasis {
 }
 
 #lastUpdated {
-    margin-top: 211rem;
     opacity: 0.6;
 }
 
@@ -74,4 +73,11 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.tables {
+    padding: 0px !important;
+}
+
+.tableCaption {
 }

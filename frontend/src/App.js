@@ -13,16 +13,12 @@ import {
     useToast,
     SimpleGrid,
     Box,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    useColorMode,
-    TableCaption,
     SlideFade,
-    IconButton
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel
 } from '@chakra-ui/react';
 
 import {
@@ -32,11 +28,15 @@ import {
     AutoCompleteList,
 } from '@choc-ui/chakra-autocomplete';
 
-import { CloseIcon, MoonIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 
+import CasesTable from './Components/CasesTable.js';
+import TrainsTable from './Components/TrainsTable.js';
+import BusesTable from './Components/BusesTable.js';
+import Navbar from './Components/Navbar.js';
+import MetroTable from './Components/MetroTable';
 
 function App() {
-    const { colorMode, toggleColorMode } = useColorMode();
 
     const [uuid, setUuid] = useState(localStorage.getItem('id'));
     const [postcodeSIDs, setPostcodeSIDs] = useState(null);
@@ -46,6 +46,7 @@ function App() {
     const [suburbs, setSuburbs] = useState(null);
 
     const [covidCases, setCovidCases] = useState(null);
+    const [transportCases, setTransportCases] = useState(null);
 
     const [error, setError] = useState('');
 
@@ -168,6 +169,13 @@ function App() {
             .catch(err => {
                 console.error(err);
             });
+
+        request
+            .get(process.env.REACT_APP_SERVER + '/transportCases')
+            .then(res => {
+                setTransportCases(res.body);
+            })
+            .catch(err => console.error(err));
     };
 
     const configure = (newSuburbSID, remove = false) => {
@@ -259,80 +267,59 @@ function App() {
     };
 
     const renderTable = () => {
-        if (!covidCases) {
-            return <Skeleton height='60px' />;
-        }
-
-        const components = [];
-
-        if (!covidCases.length) {
-            components.push(
-                <SlideFade key={0} in={true}>
-                    <Text fontSize='sm'>No cases near you. Neat!</Text>
-                </SlideFade>
-            );
-        } else {
-            components.push(
-                <SlideFade key={1} in={true}>
-                    <div className='caseTable'>
-                        <Table
-                            variant='striped'
-                            size='sm'
-                            colorScheme='pink'
+        const components = [
+            <SlideFade key={1} in={true}>
+                <Tabs
+                    colorScheme='pink'
+                    align='center'
+                    isFitted
+                >
+                    <TabList>
+                        <Tab>Venues</Tab>
+                        <Tab
+                            _selected={{
+                                color: 'sydneyTrains.500',
+                                borderColor: 'sydneyTrains.500'
+                            }}
                         >
-                            <TableCaption placement='top'>
-                                Latest updated cases near you
-                    </TableCaption>
-                            <Thead>
-                                <Tr>
-                                    <Th>Suburb</Th>
-                                    <Th>Location</Th>
-                                    <Th>Time</Th>
-                                    <Th>Updated</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {
-                                    covidCases.map((covid, i) => {
-                                        return (
-                                            <Tr key={i} className='row'>
-                                                <Td>{covid.suburb}</Td>
-                                                <Td>
-                                                    <a
-                                                        target='_blank'
-                                                        href={
-                                                            `https://www.google.com/maps/search/?api=1&query=${covid.venue} ${covid.address}`
-                                                        }
-                                                    >
-                                                        <strong>{covid.venue}</strong>
-                                                        <p className='faded'>{covid.address}</p>
-                                                    </a>
-                                                </Td>
-                                                <Td>
-                                                    {
-                                                        covid.times.map((time, i) => {
-                                                            return (
-                                                                <div key={i} className='caseDate'>
-                                                                    <p className='slightEmphasis'>{time.date}</p>
-                                                                    <p className='faded'>{time.time}</p>
-                                                                </div>
-                                                            );
-                                                        })
-                                                    }
-                                                </Td>
-                                                <Td>
-                                                    <Text as='i'>{covid.updated}</Text>
-                                                </Td>
-                                            </Tr>
-                                        );
-                                    })
-                                }
-                            </Tbody>
-                        </Table>
+                            Trains
+                        </Tab>
+                        <Tab
+                            _selected={{
+                                color: 'sydneyBuses.500',
+                                borderColor: 'sydneyBuses.500'
+                            }}
+                        >
+                            Buses
+                        </Tab>
+                        <Tab
+                            _selected={{
+                                color: 'sydneyMetro.500',
+                                borderColor: 'sydneyMetro.500'
+                            }}
+                        >
+                            Metro
+                        </Tab>
+                    </TabList>
+                    <div className='caseTable'>
+                        <TabPanels>
+                            <TabPanel className='tables'>
+                                <CasesTable cases={covidCases} />
+                            </TabPanel>
+                            <TabPanel className='tables'>
+                                <TrainsTable cases={transportCases} />
+                            </TabPanel>
+                            <TabPanel className='tables'>
+                                <BusesTable cases={transportCases} />
+                            </TabPanel>
+                            <TabPanel className='tables'>
+                                <MetroTable cases={transportCases} />
+                            </TabPanel>
+                        </TabPanels>
                     </div>
-                </SlideFade>
-            );
-        }
+                </Tabs>
+            </SlideFade>
+        ];
 
         const now = new Date();
 
@@ -367,29 +354,17 @@ function App() {
     return (
         <div className='container'>
             <div className='content'>
-                <nav>
-                    <Heading
-                        as='h1'
-                        size='xl'
-                    >
-                        <span className='heading'>COVID-19</span>
-                    </Heading>
-                    <IconButton
-                        aria-label='dark mode'
-                        icon={<MoonIcon color={colorMode === 'light' ? 'black' : 'white'} />}
-                        onClick={() => toggleColorMode()}
-                    />
-                </nav>
+                <Navbar />
                 <br />
                 <div className='externals'>
                     <Text size='sm' as='sup'>
                         <a href='https://www.nsw.gov.au/covid-19/nsw-covid-19-case-locations/exposure-locations'>
-                            Go to ServiceNSW →
+                            Go to ServiceNSW
                         </a>
                     </Text>
                     <Text size='sm' as='sup'>
                         <a href='https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx#local'>
-                            See latest stats →
+                            See latest stats
                         </a>
                     </Text>
                 </div>
@@ -453,7 +428,7 @@ function App() {
                         </UnorderedList>
                     </div>
                 </div>
-            </div >
+            </div>
         </div >
     );
 }

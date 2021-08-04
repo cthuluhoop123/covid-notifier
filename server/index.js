@@ -10,6 +10,8 @@ const notifications = require('./notifications/notifications.js');
 const covidFetcher = require('./covidFetch/fetch.js');
 
 const suburbs = require('./database/suburbs.json');
+const { transport } = require('./database/cache.js');
+const { transportCaseEndpoint } = require('../config.js');
 
 app.use(cors());
 app.use(helmet());
@@ -98,6 +100,15 @@ app.get('/nearCases', async (req, res, next) => {
         }
 
         res.json(cases[0].nearCases.slice(0, 500));
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.get('/transportCases', async (req, res, next) => {
+    try {
+        const transportCases = await covidFetcher.fetchTransportCases();
+        res.json(transportCases);
     } catch (err) {
         next(err);
     }
