@@ -66,7 +66,7 @@ async function fetchCases({ uuid, maxAge = 3 }) {
     return nearCases;
 }
 
-function fetchTransportCases(maxAge = 6) {
+function fetchTransportCases(maxAge = 3) {
     const transportCasesToday = cache.transport.data
         .filter(transportCase => {
             const caseDate = new Date(transportCase.last_updated);
