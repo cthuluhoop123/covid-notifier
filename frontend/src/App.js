@@ -268,7 +268,6 @@ function App() {
 
     const renderTable = () => {
         const components = [
-            <SlideFade key={1} in={true}>
                 <Tabs
                     colorScheme='pink'
                     align='center'
@@ -318,7 +317,6 @@ function App() {
                         </TabPanels>
                     </div>
                 </Tabs>
-            </SlideFade>
         ];
 
         const now = new Date();
@@ -331,6 +329,7 @@ function App() {
                 as='sub'
                 onClick={() => {
                     setCovidCases(null);
+                    setTransportCases(null);
                     updateNearCases();
                 }}
             >
