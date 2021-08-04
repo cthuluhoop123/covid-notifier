@@ -21,7 +21,8 @@ import {
     Td,
     useColorMode,
     TableCaption,
-    SlideFade
+    SlideFade,
+    IconButton
 } from '@chakra-ui/react';
 
 import {
@@ -31,11 +32,11 @@ import {
     AutoCompleteList,
 } from '@choc-ui/chakra-autocomplete';
 
-import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, MoonIcon } from '@chakra-ui/icons';
 
 
 function App() {
-    const { toggleColorMode } = useColorMode();
+    const { colorMode, toggleColorMode } = useColorMode();
 
     const [uuid, setUuid] = useState(localStorage.getItem('id'));
     const [postcodeSIDs, setPostcodeSIDs] = useState(null);
@@ -366,12 +367,19 @@ function App() {
     return (
         <div className='container'>
             <div className='content'>
-                <Heading
-                    as='h1'
-                    size='xl'
-                >
-                    <span className='heading' onClick={() => toggleColorMode()}>COVID-19</span>
-                </Heading>
+                <nav>
+                    <Heading
+                        as='h1'
+                        size='xl'
+                    >
+                        <span className='heading'>COVID-19</span>
+                    </Heading>
+                    <IconButton
+                        aria-label='dark mode'
+                        icon={<MoonIcon color={colorMode === 'light' ? 'black' : 'white'} />}
+                        onClick={() => toggleColorMode()}
+                    />
+                </nav>
                 <br />
                 <div className='externals'>
                     <Text size='sm' as='sup'>
