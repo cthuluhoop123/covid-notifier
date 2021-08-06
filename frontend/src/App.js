@@ -19,6 +19,8 @@ import {
     Tab,
     useColorMode,
     TabPanel,
+    Alert,
+    AlertIcon
 } from '@chakra-ui/react';
 
 import {
@@ -313,12 +315,27 @@ function App() {
                             <CasesTable cases={covidCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
+                            <Alert status="warning">
+                                <AlertIcon />
+                                Public transport cases do not seem to be reliably updated by the government as of now.
+                                These may be outdated.
+                            </Alert>
                             <TrainsTable cases={transportCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
+                            <Alert status="warning">
+                                <AlertIcon />
+                                Public transport cases do not seem to be reliably updated by the government as of now.
+                                These may be outdated.
+                            </Alert>
                             <BusesTable cases={transportCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
+                            <Alert status="warning">
+                                <AlertIcon />
+                                Public transport cases do not seem to be reliably updated by the government as of now.
+                                These may be outdated.
+                            </Alert>
                             <MetroTable cases={transportCases} />
                         </TabPanel>
                     </TabPanels>

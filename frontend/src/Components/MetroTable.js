@@ -16,7 +16,7 @@ function MetroTable({ cases }) {
         return <Skeleton height='60px' />;
     }
     if (!cases.metro.length) {
-        return <Text className='noCases' fontSize='md'>No recent public metro cases...🤔</Text>;
+        return <Text className='noCases' fontSize='md'>No recent metro cases...🤔</Text>;
     }
     return (
         <SlideFade key={1} in={true}>
