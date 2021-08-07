@@ -54,7 +54,8 @@ async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
                             distance: distance(
                                 Number(data.Lat), Number(data.Lon),
                                 Number(firstPostcodeSuburb.lat), Number(firstPostcodeSuburb.lng)
-                            )
+                            ),
+                            contact: data.HealthAdviceHTML.includes('close') ? 'Close' : 'Casual'
                         }
                     })
             );

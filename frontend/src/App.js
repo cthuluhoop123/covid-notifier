@@ -30,7 +30,7 @@ import {
     AutoCompleteList,
 } from '@choc-ui/chakra-autocomplete';
 
-import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, WarningTwoIcon } from '@chakra-ui/icons';
 
 import CasesTable from './Components/CasesTable.js';
 import TrainsTable from './Components/TrainsTable.js';
@@ -149,6 +149,7 @@ function App() {
                                         date: cur.date,
                                         time: cur.time
                                     }],
+                                    contact: cur.contact,
                                     suburb: cur.suburb,
                                     updated: cur.updated,
                                     venue: cur.venue,

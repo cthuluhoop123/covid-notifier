@@ -31,7 +31,8 @@ function MetroTable({ cases }) {
                 <Thead>
                     <Tr>
                         <Th>Route</Th>
-                        <Th>Trip</Th>
+                        <Th>Trip Start</Th>
+                        <Th>Trip Stop</Th>
                         <Th>Time</Th>
                         <Th>Updated</Th>
                     </Tr>
@@ -42,7 +43,8 @@ function MetroTable({ cases }) {
                             return (
                                 <Tr key={i} className='row'>
                                     <Td>{metroCase.route}</Td>
-                                    <Td><strong>{metroCase.start_location}</strong> - <strong>{metroCase.end_location}</strong></Td>
+                                    <Td><strong>{metroCase.start_location}</strong></Td>
+                                    <Td><strong>{metroCase.end_location}</strong></Td>
                                     <Td>
                                         <p className='slightEmphasis'>{metroCase.date_of_exposure}</p>
                                         <p className='faded'>{metroCase.time_of_exposure}</p>

@@ -8,8 +8,10 @@ import {
     Td,
     SlideFade,
     TableCaption,
-    Skeleton
+    Skeleton,
 } from '@chakra-ui/react';
+
+import { WarningTwoIcon } from '@chakra-ui/icons';
 
 function VenuesTable({ cases }) {
     if (!cases) {
@@ -26,10 +28,12 @@ function VenuesTable({ cases }) {
                 colorScheme='pink'
             >
                 <TableCaption className='tableCaption' placement='top'>
-                    Latest updated cases near you
-            </TableCaption>
+                    <p>Latest updated cases near you</p>
+                    <p><WarningTwoIcon /> - close contact</p>
+                </TableCaption>
                 <Thead>
                     <Tr>
+                        <Th></Th>
                         <Th>Suburb</Th>
                         <Th>Location</Th>
                         <Th>Time</Th>
@@ -41,6 +45,13 @@ function VenuesTable({ cases }) {
                         cases.map((covid, i) => {
                             return (
                                 <Tr key={i} className='row'>
+                                    <Td>
+                                        {
+                                            covid.contact === 'Close'
+                                                ? <WarningTwoIcon />
+                                                : null
+                                        }
+                                    </Td>
                                     <Td>{covid.suburb}</Td>
                                     <Td>
                                         <a

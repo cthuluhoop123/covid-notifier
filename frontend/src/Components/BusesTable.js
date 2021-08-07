@@ -31,7 +31,8 @@ function BusesTable({ cases }) {
                 <Thead>
                     <Tr>
                         <Th>Route</Th>
-                        <Th>Trip</Th>
+                        <Th>Trip Start</Th>
+                        <Th>Trip End</Th>
                         <Th>Time</Th>
                         <Th>Updated</Th>
                     </Tr>
@@ -42,7 +43,8 @@ function BusesTable({ cases }) {
                             return (
                                 <Tr key={i} className='row'>
                                     <Td>{busCase.route}</Td>
-                                    <Td><strong>{busCase.start_location}</strong> - <strong>{busCase.end_location}</strong></Td>
+                                    <Td><strong>{busCase.start_location}</strong></Td>
+                                    <Td><strong>{busCase.end_location}</strong></Td>
                                     <Td>
                                         <p className='slightEmphasis'>{busCase.date_of_exposure}</p>
                                         <p className='faded'>{busCase.time_of_exposure}</p>

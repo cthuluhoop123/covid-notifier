@@ -31,7 +31,8 @@ function TrainsTable({ cases }) {
                 <Thead>
                     <Tr>
                         <Th>Route</Th>
-                        <Th>Trip</Th>
+                        <Th>Trip Start</Th>
+                        <Th>Trip End</Th>
                         <Th>Time</Th>
                         <Th>Updated</Th>
                     </Tr>
@@ -43,7 +44,10 @@ function TrainsTable({ cases }) {
                                 <Tr key={i} className='row'>
                                     <Td>{trainCase.route}</Td>
                                     <Td>
-                                        <strong>{trainCase.start_location}</strong> - <strong>{trainCase.end_location}</strong>
+                                        <strong>{trainCase.start_location}</strong>
+                                    </Td>
+                                    <Td>
+                                        <strong>{trainCase.end_location}</strong>
                                     </Td>
                                     <Td>
                                         <p className='slightEmphasis'>{trainCase.date_of_exposure}</p>
