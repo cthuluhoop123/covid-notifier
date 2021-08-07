@@ -159,5 +159,13 @@ module.exports = {
             + covidCase.date
             + covidCase.time
             + covidCase.updated;
+    },
+    unparsedCasetoKey(unparsedCase) {
+        return unparsedCase.Venue
+            + unparsedCase.Address
+            + unparsedCase.Suburb
+            + unparsedCase.Date
+            + unparsedCase.Time
+            + unparsedCase['Last updated date'];
     }
 };

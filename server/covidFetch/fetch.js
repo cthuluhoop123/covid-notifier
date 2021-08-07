@@ -41,12 +41,7 @@ async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
                             Number(userSuburb.lat), Number(userSuburb.lng)
                         ) <= maxDist
                             && !data.nearCases.find(existingCase => {
-                                return db.caseToKey(existingCase) === covidCase.Venue
-                                    + covidCase.Address
-                                    + covidCase.Suburb
-                                    + covidCase.Date
-                                    + covidCase.Time
-                                    + covidCase['Last updated date'];
+                                return db.caseToKey(existingCase) === db.unparsedCasetoKey(covidCase);
                             });
                     })
                     .map(data => {
