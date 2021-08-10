@@ -7,6 +7,8 @@ const { transportCaseEndpoint } = require('../../config.js');
 const { transport } = require('../database/cache.js');
 
 async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
+    if (!cache.cases.data.monitor) { return []; }
+    
     const casesToday = cache.cases.data.monitor
         .filter(covidCase => {
             const caseDate = new Date(covidCase['Last updated date']);

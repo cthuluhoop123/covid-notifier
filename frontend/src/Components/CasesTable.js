@@ -36,7 +36,7 @@ function VenuesTable({ cases }) {
                         <Th></Th>
                         <Th>Suburb</Th>
                         <Th>Location</Th>
-                        <Th>Time</Th>
+                        <Th>Exposure Time</Th>
                         <Th>Updated</Th>
                     </Tr>
                 </Thead>

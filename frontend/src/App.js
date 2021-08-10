@@ -20,7 +20,13 @@ import {
     useColorMode,
     TabPanel,
     Alert,
-    AlertIcon
+    AlertIcon,
+    HStack,
+    Tag,
+    TagLabel,
+    TagLeftIcon,
+    TagRightIcon,
+    TagCloseButton
 } from '@chakra-ui/react';
 
 import {
@@ -250,18 +256,19 @@ function App() {
 
         return postcodeSIDs.map((postcode, i) => {
             return (
-                <SimpleGrid key={i} columns={2} spacing={1} className='alignWithIcon'>
-                    <Box>
-                        <Text fontSize='sm'>{postcode.suburb} ({postcode.postcode})</Text>
-                    </Box>
-                    <Box className='iconText'>
-                        <div onClick={e => {
-                            configure(postcode.sid, true);
-                        }}>
-                            <CloseIcon style={{ textAlign: 'right' }} />
-                        </div>
-                    </Box>
-                </SimpleGrid >
+                <Tag
+                    key={i}
+                    className='flexedSuburb'
+                    size='sm'
+                    borderRadius='full'
+                    variant='solid'
+                    colorScheme='pink'
+                >
+                    <TagLabel>{postcode.suburb} ({postcode.postcode})</TagLabel>
+                    <TagCloseButton onClick={e => {
+                        configure(postcode.sid, true);
+                    }} />
+                </Tag>
             );
         });
     };
@@ -316,7 +323,7 @@ function App() {
                             <CasesTable cases={covidCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
-                            <Alert status="warning">
+                            <Alert status='warning'>
                                 <AlertIcon />
                                 Public transport cases do not seem to be reliably updated by the government as of now.
                                 These may be outdated.
@@ -324,7 +331,7 @@ function App() {
                             <TrainsTable cases={transportCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
-                            <Alert status="warning">
+                            <Alert status='warning'>
                                 <AlertIcon />
                                 Public transport cases do not seem to be reliably updated by the government as of now.
                                 These may be outdated.
@@ -332,7 +339,7 @@ function App() {
                             <BusesTable cases={transportCases} />
                         </TabPanel>
                         <TabPanel className='tables'>
-                            <Alert status="warning">
+                            <Alert status='warning'>
                                 <AlertIcon />
                                 Public transport cases do not seem to be reliably updated by the government as of now.
                                 These may be outdated.
@@ -379,6 +386,71 @@ function App() {
         <div className='container'>
             <div className='content'>
                 <Navbar maxDist={maxDist} setMaxDist={setMaxDist} />
+                <div className='subscribe'>
+                    <div className='subscribedList'>
+                        <div className='flexInputSuburbs'>
+                            <div className='flexInput'>
+                                <AutoComplete
+                                    rollNavigation
+                                    shouldRenderSuggestions={value => {
+                                        return value.trim().length >= 3;
+                                    }}
+                                    width='15rem'
+                                    maxSuggestions={5}
+                                >
+                                    <AutoCompleteInput
+                                        size='sm'
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                            }
+                                        }}
+                                        type='number'
+                                        variant='filled'
+                                        isInvalid={error}
+                                        placeholder='Add a suburb by postcode...'
+                                        autoFocus
+                                        value={postcodeSearch}
+                                        onChange={search => {
+                                            setPostcodeSearch(search.target.value);
+                                            if (search.target.value.length >= 3) {
+                                                getSuburbs(search.target.value);
+                                            }
+                                        }}
+                                    />
+                                    <AutoCompleteList>
+                                        {
+                                            suburbs
+                                                ? suburbs.map((suburb, i) => {
+                                                    return (
+                                                        <AutoCompleteItem
+                                                            key={i}
+                                                            value={suburb.postcode}
+                                                            data-sid={suburb.sid}
+                                                            onClick={e => {
+                                                                configure(e.target.dataset.sid)
+                                                                    .then(() => setPostcodeSearch(''))
+                                                                    .catch(err => { });
+                                                            }}
+                                                        >
+                                                            {suburb.suburb}
+                                                        </AutoCompleteItem>
+                                                    );
+                                                })
+                                                : null
+                                        }
+                                    </AutoCompleteList>
+                                </AutoComplete>
+                            </div>
+                            <div className='flexSuburbs'>
+                                {renderSuburbs()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='data'>
+                    {renderTable()}
+                </div>
                 <br />
                 <div className='externals'>
                     <Text size='sm' as='sup'>
@@ -392,68 +464,8 @@ function App() {
                         </a>
                     </Text>
                 </div>
-                {renderTable()}
-                <div className='subscribe'>
-                    <AutoComplete
-                        rollNavigation
-                        shouldRenderSuggestions={value => {
-                            return value.trim().length >= 3;
-                        }}
-                        maxSuggestions={5}
-                    >
-                        <AutoCompleteInput
-                            onKeyDown={e => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                }
-                            }}
-                            type='number'
-                            variant='filled'
-                            isInvalid={error}
-                            placeholder='Add a suburb by postcode...'
-                            autoFocus
-                            value={postcodeSearch}
-                            onChange={search => {
-                                setPostcodeSearch(search.target.value);
-                                if (search.target.value.length >= 3) {
-                                    getSuburbs(search.target.value);
-                                }
-                            }}
-                        />
-                        <AutoCompleteList>
-                            {
-                                suburbs
-                                    ? suburbs.map((suburb, i) => {
-                                        return (
-                                            <AutoCompleteItem
-                                                key={i}
-                                                value={suburb.postcode}
-                                                data-sid={suburb.sid}
-                                                onClick={e => {
-                                                    configure(e.target.dataset.sid)
-                                                        .then(() => setPostcodeSearch(''))
-                                                        .catch(err => { });
-                                                }}
-                                            >
-                                                {suburb.suburb}
-                                            </AutoCompleteItem>
-                                        );
-                                    })
-                                    : null
-                            }
-                        </AutoCompleteList>
-                    </AutoComplete>
-                    <div className='subscribedList'>
-                        <Heading id='interested' as='h4' size='md'>
-                            Areas you're interested in:
-                    </Heading>
-                        <UnorderedList>
-                            {renderSuburbs()}
-                        </UnorderedList>
-                    </div>
-                </div>
             </div>
-        </div >
+        </div>
     );
 }
 

@@ -33,7 +33,7 @@ function MetroTable({ cases }) {
                         <Th>Route</Th>
                         <Th>Trip Start</Th>
                         <Th>Trip Stop</Th>
-                        <Th>Time</Th>
+                        <Th>Exposure Time</Th>
                         <Th>Updated</Th>
                     </Tr>
                 </Thead>

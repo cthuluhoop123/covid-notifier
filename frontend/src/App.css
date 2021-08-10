@@ -7,9 +7,6 @@
     margin: 1rem 0rem;
 }
 
-.subscribe {
-    margin-top: 2rem;
-}
 
 .subscribedList {
     margin-top: 1rem;
@@ -20,7 +17,8 @@ p.faded {
 }
 
 .caseTable {
-    overflow-x: scroll;
+    overflow: scroll;
+    max-height: 65vh;
 }
 
 #interested {
@@ -33,16 +31,12 @@ p.faded {
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1500px;
     margin: auto;
 }
 
 .heading:hover {
     cursor: default;
-}
-
-.caseTable {
-    max-height: 65vh;
 }
 
 .caseDate {
@@ -58,6 +52,7 @@ p.slightEmphasis {
 }
 
 .externals a {
+    text-decoration: underline;
     margin-right: 1.5rem;
 }
 
@@ -88,4 +83,26 @@ nav {
 
 .navbarButtons button {
     margin-right: .7rem;
+}
+
+.flexInputSuburbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.flexInput {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.flexSuburbs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.flexedSuburb {
+    margin: 2px 2px;
 }
