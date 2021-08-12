@@ -396,7 +396,6 @@ function App() {
                                         return value.trim().length >= 3;
                                     }}
                                     width='15rem'
-                                    maxSuggestions={5}
                                 >
                                     <AutoCompleteInput
                                         size='sm'
