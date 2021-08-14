@@ -34,7 +34,7 @@ async function updateCache() {
 
 async function fetch() {
     await updateCache();
-    const caseRelevantToUsers = await covidFetch.fetchCases({ maxAge: 0 });
+    const caseRelevantToUsers = await covidFetch.fetchCases({ maxAge: 0, maxDist: 7 });
     const markAsSent = [];
     for (const userCases of caseRelevantToUsers) {
         const updatedToday = (await Promise.all(
