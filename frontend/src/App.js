@@ -87,9 +87,7 @@ function App() {
         }
     };
 
-    useEffect(() => {
-        document.documentElement.style.setProperty('color-scheme', colorMode);
-    });
+    document.documentElement.style.setProperty('color-scheme', colorMode);
 
     useEffect(() => {
         if (!uuid) {
@@ -299,7 +297,7 @@ function App() {
                         }}
                     >
                         Trains
-                        </Tab>
+                    </Tab>
                     <Tab
                         _selected={{
                             color: 'sydneyBuses.500',
@@ -307,7 +305,7 @@ function App() {
                         }}
                     >
                         Buses
-                        </Tab>
+                    </Tab>
                     <Tab
                         _selected={{
                             color: 'sydneyMetro.500',
@@ -315,7 +313,7 @@ function App() {
                         }}
                     >
                         Metro
-                        </Tab>
+                    </Tab>
                 </TabList>
                 <div className='caseTable'>
                     <TabPanels>
