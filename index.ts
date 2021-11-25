@@ -1,10 +1,13 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-const config = require('./config.js');
-const cache = require('./server/database/cache.js');
-const path = require('path');
-const fs = require('fs');
-const request = require('axios');
+import config from './config';
+import cache from './server/database/cache';
+import path from 'path';
+import fs from 'fs';
+import request from 'axios';
+
+import server from './server/index.js';
 
 const casesPath = path.join('server', 'database', 'cases.json');
 const tranportPath = path.join('server', 'database', 'transport.json');
@@ -39,6 +42,6 @@ try {
 }
 
 function start() {
-    require('./server/index.js');
+    server.run();
     require('./server/cron/notifications.js');
 }

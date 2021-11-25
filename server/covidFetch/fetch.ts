@@ -1,28 +1,57 @@
 require('dotenv').config();
 
-const db = require('../database/database.js');
-const cache = require('../database/cache.js');
-const suburbs = require('../database/suburbs.json');
-const { transportCaseEndpoint } = require('../../config.js');
-const { transport } = require('../database/cache.js');
+import db from '../database/database';
+import cache from '../database/cache';
+import suburbs from '../database/suburbs.json';
 
-async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
+interface CaseFilter {
+    uuid: string,
+    maxDist?: number,
+    maxAge?: number,
+}
+
+interface Subscription {
+    userId: string,
+    endpoint: string,
+    p256dh: string,
+    auth: string
+}
+
+interface NearCase {
+    venue: string,
+    address: string,
+    suburb: string,
+    date: string,
+    time: string,
+    adviceHTML: string,
+    updated: string,
+    latlng: [number, number],
+    distance: number,
+    contact: 'Close' | 'Casual'
+}
+
+interface CasesData {
+    nearCases: NearCase[],
+    subscription?: Subscription
+}
+
+async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }: CaseFilter): Promise<CasesData[]> {
     if (!cache.cases.data.monitor) { return []; }
-    
+
     const casesToday = cache.cases.data.monitor
-        .filter(covidCase => {
+        .filter((covidCase: any) => {
             const caseDate = new Date(covidCase['Last updated date']);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            return today - caseDate <= 1000 * 60 * 60 * 24 * maxAge;
+            return today.getTime() - caseDate.getTime() <= 1000 * 60 * 60 * 24 * maxAge;
         })
-        .sort((a, b) => new Date(b['Last updated date']) - new Date(a['Last updated date']));
+        .sort((a: any, b: any) => new Date(b['Last updated date']).getTime() - new Date(a['Last updated date']).getTime());
 
     const users = await db.getUsers(uuid);
-    const nearCases = [];
+    const nearCases: CasesData[] = [];
 
     for (const user of users) {
-        const data = { nearCases: [] };
+        const data: CasesData = { nearCases: [] };
         const [subscription] = await db.getSubscriptions(user.userId);
         if (subscription) {
             data.subscription = {
@@ -33,11 +62,13 @@ async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
             };
         }
         const firstPostcodeSuburb = suburbs.find(suburb => suburb.sid === user.postcodeSIDs[0]);
+        if (!firstPostcodeSuburb) { continue; }
         for (const postcodeSID of user.postcodeSIDs) {
             const userSuburb = suburbs.find(suburb => suburb.sid === postcodeSID);
+            if (!userSuburb) { continue; }
             data.nearCases.push(
                 ...casesToday
-                    .filter(covidCase => {
+                    .filter((covidCase: any) => {
                         return distance(
                             Number(covidCase.Lat), Number(covidCase.Lon),
                             Number(userSuburb.lat), Number(userSuburb.lng)
@@ -46,7 +77,7 @@ async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
                                 return db.caseToKey(existingCase) === db.unparsedCasetoKey(covidCase);
                             });
                     })
-                    .map(data => {
+                    .map((data: any) => {
                         return {
                             venue: data.Venue,
                             address: data.Address,
@@ -74,13 +105,13 @@ async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }) {
 
 function fetchTransportCases(maxAge = 3) {
     const transportCasesToday = cache.transport.data
-        .filter(transportCase => {
+        .filter((transportCase: any) => {
             const caseDate = new Date(transportCase.last_updated);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            return today - caseDate <= 1000 * 60 * 60 * 24 * maxAge;
+            return today.getTime() - caseDate.getTime() <= 1000 * 60 * 60 * 24 * maxAge;
         })
-        .sort((a, b) => new Date(b.last_updated) - new Date(a.last_updated));
+        .sort((a: any, b: any) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime());
 
     const trains = [];
     const buses = [];
@@ -102,7 +133,7 @@ function fetchTransportCases(maxAge = 3) {
 }
 
 // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-function distance(lat1, lon1, lat2, lon2) {
+function distance(lat1: number, lon1: number, lat2: number, lon2: number) {
     var p = 0.017453292519943295;    // Math.PI / 180
     var c = Math.cos;
     var a = 0.5 - c((lat2 - lat1) * p) / 2 +
@@ -112,4 +143,4 @@ function distance(lat1, lon1, lat2, lon2) {
     return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
 
-module.exports = { fetchCases, fetchTransportCases };
+export default { fetchCases, fetchTransportCases };

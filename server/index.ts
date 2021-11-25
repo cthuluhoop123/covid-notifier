@@ -1,17 +1,15 @@
-const express = require('express');
+import express, { Response, Request, NextFunction, Errback } from 'express';
 const app = express();
 
-const db = require('./database/database.js');
+import db from './database/database';
 
-const helmet = require('helmet');
-const cors = require('cors');
+import helmet from 'helmet';
+import cors from 'cors';
 
-const notifications = require('./notifications/notifications.js');
-const covidFetcher = require('./covidFetch/fetch.js');
+import notifications from './notifications/notifications'
+import covidFetcher from './covidFetch/fetch';
 
-const suburbs = require('./database/suburbs.json');
-const { transport } = require('./database/cache.js');
-const { transportCaseEndpoint } = require('../config.js');
+import suburbs from './database/suburbs.json';
 
 app.use(cors());
 app.use(helmet());
@@ -21,7 +19,7 @@ app.use(express.urlencoded({
 }));
 
 
-app.post('/configure', async (req, res, next) => {
+app.post('/configure', async (req: Request, res: Response, next: NextFunction) => {
     const { id, postcodeSIDs } = req.body;
     try {
         if (!isValidPostcodeSIDs(postcodeSIDs)) {
@@ -43,7 +41,7 @@ app.post('/configure', async (req, res, next) => {
     }
 });
 
-app.get('/configuration', async (req, res, next) => {
+app.get('/configuration', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.query;
     try {
         const postcodeSIDs = await db.getPostCodeSIDs(id);
@@ -53,7 +51,7 @@ app.get('/configuration', async (req, res, next) => {
     }
 });
 
-app.post('/createUser', async (req, res, next) => {
+app.post('/createUser', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const uuid = await db.createUser();
         res.json({
@@ -64,14 +62,16 @@ app.post('/createUser', async (req, res, next) => {
     }
 });
 
-app.get('/suburbs', (req, res) => {
+app.get('/suburbs', (req: Request, res: Response) => {
     const { postcode } = req.query;
+    // @ts-ignore: Object is possibly 'null'.
     if (!postcode || postcode.length < 2) {
         res.json([]);
+        return;
     }
     res.json(
         suburbs
-            .filter(suburb => suburb.postcode.startsWith(postcode))
+            .filter(suburb => suburb.postcode.startsWith(<string>postcode))
             .map(suburb => {
                 return {
                     postcode: suburb.postcode,
@@ -82,8 +82,8 @@ app.get('/suburbs', (req, res) => {
     );
 });
 
-app.get('/nearCases', async (req, res, next) => {
-    const { id, maxDist } = req.query;
+app.get('/nearCases', async (req: Request, res: Response, next: NextFunction) => {
+    const { id, maxDist } = req.query as { id: string, maxDist: string };
 
     if (!id) {
         res.status(400).json({
@@ -93,19 +93,18 @@ app.get('/nearCases', async (req, res, next) => {
     }
 
     try {
-        const cases = await covidFetcher.fetchCases({ uuid: id, maxDist });
+        const cases = await covidFetcher.fetchCases({ uuid: id, maxDist: Number(maxDist) });
         if (!cases.length) {
             res.json([]);
             return;
         }
-
         res.json(cases[0].nearCases.slice(0, 500));
     } catch (err) {
         next(err);
     }
 });
 
-app.get('/transportCases', async (req, res, next) => {
+app.get('/transportCases', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const transportCases = await covidFetcher.fetchTransportCases();
         res.json(transportCases);
@@ -120,25 +119,28 @@ app.use('/*', (req, res) => {
     res.send('404');
 });
 
-app.use((err, req, res, next) => {
+app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
     res.status(500).json({
         body: 'sorry...'
     });
 })
 
-app.listen(process.env.PORT, () => console.log('Running on', process.env.PORT));
+function run() {
+    app.listen(process.env.PORT, () => console.log('Running on', process.env.PORT));
+}
 
-function isValidPostcodeSIDs(postcodeSIDs) {
+function isValidPostcodeSIDs(postcodeSIDs: string[]) {
     return postcodeSIDs.every(sid => {
         return !!suburbs.find(suburb => suburb.sid === sid);
     });
 }
 
-function postcodeSIDToSubPost(postcodeSIDs) {
+function postcodeSIDToSubPost(postcodeSIDs: string[]) {
     const data = [];
     for (const postcode_sid of postcodeSIDs) {
         const suburb = suburbs.find(suburb => suburb.sid === postcode_sid);
+        if (!suburb) { continue; }
         data.push({
             sid: postcode_sid,
             postcode: suburb.postcode,
@@ -147,3 +149,5 @@ function postcodeSIDToSubPost(postcodeSIDs) {
     }
     return data;
 }
+
+export default { run };

@@ -1,4 +1,6 @@
-const knex = require('knex')({
+import Knex from 'knex';
+
+const knex = Knex({
     client: 'sqlite3',
     connection: {
         filename: './data.db',
@@ -7,8 +9,17 @@ const knex = require('knex')({
 
 const uuid = require('uuid').v4;
 
-module.exports = {
-    async getUsers(uuid) {
+interface User {
+    id: number,
+}
+
+interface UserPostcodes {
+    userId: number,
+    postcodeSIDs: string[]
+}
+
+export default {
+    async getUsers(uuid: string): Promise<UserPostcodes[]> {
         const query = knex('users')
             .select()
             .innerJoin('postcode_sids', 'users.id', 'postcode_sids.user_id')
@@ -18,9 +29,9 @@ module.exports = {
             query.where('users.id', uuid);
         }
 
-        const users = await query;
+        const users= await query;
 
-        return users.reduce((acc, cur) => {
+        return users.reduce((acc: UserPostcodes[], cur) => {
             const existing = acc.find(user => user.userId === cur.user_id);
             if (existing) {
                 existing.postcodeSIDs.push(cur.postcode_sid);
