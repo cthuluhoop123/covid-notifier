@@ -1,4 +1,5 @@
 import express, { Response, Request, NextFunction, Errback } from 'express';
+
 const app = express();
 
 import db from './database/database';
@@ -44,7 +45,7 @@ app.post('/configure', async (req: Request, res: Response, next: NextFunction) =
 app.get('/configuration', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.query;
     try {
-        const postcodeSIDs = await db.getPostCodeSIDs(id);
+        const postcodeSIDs = await db.getPostCodeSIDs(<string>id);
         res.json(postcodeSIDToSubPost(postcodeSIDs));
     } catch (err) {
         next(err);

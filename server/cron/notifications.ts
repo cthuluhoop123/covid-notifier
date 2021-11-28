@@ -14,7 +14,7 @@ webPush.setVapidDetails('mailto:dowzhong@gmail.com', process.env.PUBLIC_VAPID, p
 
 
 schedule.scheduleJob('*/15 * * * *', () => {
-    fetch().catch(err => { console.error(err) });
+    fetch().catch(err => { console.error(err); });
 });
 
 console.log('Job scheduled.');

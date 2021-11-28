@@ -7,14 +7,17 @@ const knex = Knex({
     },
 });
 
-const uuid = require('uuid').v4;
+import { v4 as uuid } from 'uuid';
+
+// Refactor this and move interfaces/types into a centralized folder?
+import { NearCase, Subscription } from '../types';
 
 interface User {
-    id: number,
+    id: string,
 }
 
 interface UserPostcodes {
-    userId: number,
+    userId: string,
     postcodeSIDs: string[]
 }
 
@@ -29,7 +32,7 @@ export default {
             query.where('users.id', uuid);
         }
 
-        const users= await query;
+        const users = await query;
 
         return users.reduce((acc: UserPostcodes[], cur) => {
             const existing = acc.find(user => user.userId === cur.user_id);
@@ -44,7 +47,7 @@ export default {
             return acc;
         }, []);
     },
-    async notificationsSent(serviceNSWCases) {
+    async notificationsSent(serviceNSWCases: NearCase[]) {
         const keys = serviceNSWCases.map(nswCase => this.caseToKey(nswCase));
         return Promise.all(
             keys.map(key => {
@@ -57,13 +60,13 @@ export default {
             })
         );
     },
-    async alreadyNotified(serviceNSWCase) {
+    async alreadyNotified(serviceNSWCase: NearCase) {
         const key = this.caseToKey(serviceNSWCase);
         const sent = await knex('notifications_sent')
             .where('case_key', key);
         return sent.length > 0;
     },
-    async getSubscriptions(uuid) {
+    async getSubscriptions(uuid: string) {
         const query = knex('subscriptions')
             .select()
             .innerJoin('postcode_sids', 'subscriptions.user_id', 'postcode_sids.user_id');
@@ -72,11 +75,12 @@ export default {
             query.where('subscriptions.user_id', uuid);
         }
 
-        const users = await query;
+        const users: Subscription[] = await query;
 
-        return users.reduce((acc, cur) => {
+        return users.reduce((acc: Subscription[], cur: any) => {
             const existing = acc.find(user => user.userId === cur.user_id);
             if (existing) {
+                // @ts-ignore Object is possibly 'undefined'.
                 existing.postcodeSIDs.push(cur.postcode_sid);
                 return acc;
             }
@@ -90,7 +94,7 @@ export default {
             return acc;
         }, []);
     },
-    async updatePostcodes(uuid, postcodeSIDs = []) {
+    async updatePostcodes(uuid: string, postcodeSIDs: string[] = []) {
         if (!uuid) {
             throw new Error('ID missing.');
         }
@@ -117,7 +121,7 @@ export default {
 
         return this.getPostCodeSIDs(uuid);
     },
-    async getPostCodeSIDs(uuid) {
+    async getPostCodeSIDs(uuid: string) {
         if (!uuid) {
             throw new Error('ID missing.');
         }
@@ -138,7 +142,7 @@ export default {
             });
         return id;
     },
-    async createSubscription(uuid, subscription) {
+    async createSubscription(uuid: string, subscription: any) {
         const user = await knex('subscriptions')
             .insert({
                 user_id: uuid,
@@ -149,7 +153,7 @@ export default {
             .onConflict('user_id')
             .merge();
     },
-    renewSubscription(oldEndpoint, newData) {
+    renewSubscription(oldEndpoint: any, newData: any) {
         return knex('subscriptions')
             .update({
                 endpoint: newData.newEndpoint,
@@ -158,12 +162,12 @@ export default {
             })
             .where('subscriptions.endpoint', oldEndpoint);
     },
-    deleteSubscription(endpoint) {
+    deleteSubscription(endpoint: string) {
         return knex('subscriptions')
             .where('subscriptions.endpoint', endpoint)
             .del();
     },
-    caseToKey(covidCase) {
+    caseToKey(covidCase: NearCase) {
         return covidCase.venue
             + covidCase.address
             + covidCase.suburb
@@ -171,7 +175,7 @@ export default {
             + covidCase.time
             + covidCase.updated;
     },
-    unparsedCasetoKey(unparsedCase) {
+    unparsedCasetoKey(unparsedCase: any) {
         return unparsedCase.Venue
             + unparsedCase.Address
             + unparsedCase.Suburb

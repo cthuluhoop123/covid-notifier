@@ -4,36 +4,13 @@ import db from '../database/database';
 import cache from '../database/cache';
 import suburbs from '../database/suburbs.json';
 
-interface CaseFilter {
-    uuid: string,
-    maxDist?: number,
-    maxAge?: number,
-}
-
-interface Subscription {
-    userId: string,
-    endpoint: string,
-    p256dh: string,
-    auth: string
-}
-
-interface NearCase {
-    venue: string,
-    address: string,
-    suburb: string,
-    date: string,
-    time: string,
-    adviceHTML: string,
-    updated: string,
-    latlng: [number, number],
-    distance: number,
-    contact: 'Close' | 'Casual'
-}
-
-interface CasesData {
-    nearCases: NearCase[],
-    subscription?: Subscription
-}
+import {
+    CaseFilter,
+    Subscription,
+    NearCase,
+    TransportCase,
+    CasesData
+} from '../types';
 
 async function fetchCases({ uuid, maxDist = 10, maxAge = 3 }: CaseFilter): Promise<CasesData[]> {
     if (!cache.cases.data.monitor) { return []; }
